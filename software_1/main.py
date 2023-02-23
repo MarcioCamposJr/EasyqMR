@@ -1,4 +1,4 @@
-from ImpExpMRI.Dicom import OpenDicom,Preview
+from ImpExpMRI.Dicom import OpenDicom, Preview
 from Preprocessing.Dicom.FilterSlices import SlicesMRI
 from Preprocessing.Dicom.getinfo import getInfoDicom
 
@@ -6,24 +6,25 @@ from FunctionDashboard.SlidersChangeImage import SliderMRI
 
 from FunctionDashboard.MaskSelection import Mask
 
-from qtpy.QtWidgets import QMainWindow,QApplication,QStackedWidget, QDesktopWidget
+from qtpy.QtWidgets import QMainWindow, QApplication, QStackedWidget, QSizePolicy
 from qtpy.uic import loadUi
-from qtpy.QtGui import QImage,QPixmap
+from qtpy.QtGui import QImage, QPixmap
 from qtpy.QtCore import Qt
 
 import sys
+
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
 
-        super(MainWindow,self).__init__()
+        super(MainWindow, self).__init__()
 
         self.MatrixMRI = None
         self.ImageMRI = None
         self.slider = None
 
-        loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\init2.ui', self)
+        loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\main.ui', self)
 
         self.OpenDicom.triggered.connect(self.initClassOpenFolder)
 
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
         self.Maskselection.clicked.connect(self.MaskSelection)
 
     def initClassOpenFolder(self):
-        importData =  OpenDicom.OpenMRI()
+        importData = OpenDicom.OpenMRI()
         if importData.path:
             imageData = importData.imageMRI
             self.preview = Preview.PreviewGUI(imageData)
@@ -62,7 +63,7 @@ class MainWindow(QMainWindow):
 
             valueH = self.horizontalSlider.value()
 
-            self.horizontalSlider.setMaximum(len(self.MatrixMRI[:])-1)
+            self.horizontalSlider.setMaximum(len(self.MatrixMRI[:]) - 1)
             self.verticalSlider.setMaximum(len(self.MatrixMRI[valueH][:]) - 1)
 
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
@@ -86,7 +87,6 @@ class MainWindow(QMainWindow):
     def ChangeSliderV(self):
 
         if self.ImageMRI is not None:
-
             valueH = self.horizontalSlider.value()
             valueV = self.verticalSlider.value()
 
@@ -101,7 +101,6 @@ class MainWindow(QMainWindow):
     def MaskSelection(self):
 
         if self.MatrixMRI is not None:
-
             self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), self.Contrast.value())
             self.mask.full.clicked.connect(self.setMapping)
 
@@ -116,9 +115,8 @@ class MainWindow(QMainWindow):
 
         # def filtro(x):
         #     return x<256
-        #
+        # dawdaawd
         # MapImage = list(filter(filtro,MapImage))
-
 
         image = QImage(MapImage, len(MapImage[:][0]), len(MapImage[:]), QImage.Format_Grayscale16)
         scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
@@ -127,13 +125,12 @@ class MainWindow(QMainWindow):
     def setinfo(self):
 
         info = getInfoDicom(self.ImageMRI[0])
-        self.pacient.setText(str(info[0]))
-        self.body.setText(str(info[1]))
-        self.type.setText(str(info[2]))
-        self.desc.setText(str(info[3]))
+        # self.pacient.setText(str(info[0]))
+        # self.body.setText(str(info[1]))
+        # self.type.setText(str(info[2]))
+        # self.desc.setText(str(info[3]))
         # self.variation.setText(str(variation_detection(image_mri)))
         # self.clss.setText(str(classification(image_mri)))
-
 
 
 app = QApplication(sys.argv)
@@ -141,13 +138,23 @@ app = QApplication(sys.argv)
 screen = app.primaryScreen()
 sizeScreen = screen.availableGeometry()
 
-mainwindow= MainWindow()
+mainwindow = MainWindow()
 widget = QStackedWidget()
 widget.addWidget(mainwindow)
 
 widget.setWindowTitle("EasyqMR")
 
-widget.setFixedSize(sizeScreen.width(),sizeScreen.height())
+policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+policy.setHeightForWidth(True)
+widget.setSizePolicy(policy)
+
+# widget.widget(sizeScreen.width())
+# widget.height(sizeScreen.height())
+
+# widget.setFixedSize(sizeScreen.width(),sizeScreen.height())
+
+
+
 widget.show()
 
 app.exec_()
