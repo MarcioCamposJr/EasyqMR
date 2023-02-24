@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
 
         # def filtro(x):
         #     return x<256
-        # dawdaawd
+        #
         # MapImage = list(filter(filtro,MapImage))
 
         image = QImage(MapImage, len(MapImage[:][0]), len(MapImage[:]), QImage.Format_Grayscale16)
@@ -148,12 +148,10 @@ policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 policy.setHeightForWidth(True)
 widget.setSizePolicy(policy)
 
-# widget.widget(sizeScreen.width())
-# widget.height(sizeScreen.height())
+widget.setMinimumWidth(sizeScreen.width()*(2/3))
+widget.setMinimumHeight(sizeScreen.height()*(2/3))
 
-# widget.setFixedSize(sizeScreen.width(),sizeScreen.height())
-
-
+widget.showMaximized()
 
 widget.show()
 
