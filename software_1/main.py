@@ -1,6 +1,10 @@
-from ImpExpMRI.Dicom import OpenDicom, Preview
+from ImpExpMRI.Dicom import OpenDicom
+from ImpExpMRI.NIfTI import OpenNII
+from ImpExpMRI import Preview
+
 from Preprocessing.Dicom.FilterSlices import SlicesMRI
 from Preprocessing.Dicom.getinfo import getInfoDicom
+from Preprocessing import FormattingMRI
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
 
@@ -26,7 +30,8 @@ class MainWindow(QMainWindow):
 
         loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\main.ui', self)
 
-        self.OpenDicom.triggered.connect(self.initClassOpenFolder)
+        self.OpenDicom.triggered.connect(self.OpenFolderDicom)
+        self.OpenNIFTI.triggered.connect(self.OpenFolderNii)
 
         self.horizontalSlider.valueChanged.connect(self.ChangeSlider)
         self.verticalSlider.valueChanged.connect(self.ChangeSlider)
@@ -36,12 +41,28 @@ class MainWindow(QMainWindow):
 
         self.Maskselection.clicked.connect(self.MaskSelection)
 
-    def initClassOpenFolder(self):
+    def OpenFolderDicom(self):
+
         importData = OpenDicom.OpenMRI()
+
         if importData.path:
+            image_type = 'DICOM'
             imageData = importData.imageMRI
-            self.preview = Preview.PreviewGUI(imageData)
-            self.preview.Open.clicked.connect(self.CheckImage)
+            self.Preview(imageData, image_type)
+
+    def OpenFolderNii(self):
+
+        importData = OpenNII.OpenNII()
+
+        if importData.path:
+            image_type = 'NIfTi'
+            imageData = importData.imageMRI
+            self.Preview(imageData, image_type)
+
+    def Preview(self, imageData, image_type):
+        MRI = FormattingMRI.FormattedMRI(imageData, image_type)
+        self.preview = Preview.PreviewGUI(MRI)
+        self.preview.Open.clicked.connect(self.CheckImage)
 
     def CheckImage(self):
 
