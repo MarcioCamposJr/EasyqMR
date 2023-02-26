@@ -6,13 +6,16 @@ class SlicesMRI():
         self.Matrix = self.FormulantinMatrixMRI(imageMRI)
 
     def SlicerCounter(self, imageMRI):
-        i=0
-        cont = 0
-        if len(imageMRI) !=0:
-            while imageMRI[i].SliceLocation == imageMRI[i+1].SliceLocation:
-                i = i+1
-                cont = cont + 1
-            return cont
+        if imageMRI[0].SliceLocation is not None: # Coloquei esta condicao ainda porque nao entendi muito bem a estrutura do nifti
+            i=0
+            cont = 0
+            if len(imageMRI) !=0:
+                while imageMRI[i].SliceLocation == imageMRI[i+1].SliceLocation:
+                    i = i+1
+                    cont = cont + 1
+        else:
+            cont = 0
+        return cont
 
     def SepareteSlices(self, imageMRI):
 

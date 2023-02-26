@@ -11,18 +11,13 @@ class OpenNII(QDialog):
 
     def brosewfiles(self):
         filedialog = QFileDialog()
-        path = filedialog.getExistingDirectory(self, 'Open file','C:/Users/marci/OneDrive/Desktop')
+        path = filedialog.getOpenFileName(self, 'Open file','C:/Users/marci/OneDrive/Desktop','NIfTi (*.nii)')
         filedialog.show()
-        return path
+        return path[0]
 
     def importData(self, path_to_MRI):
-        # path_to_MRI = Path(path_to_MRI)
-        all_files = list(path_to_MRI.glob("*"))
+        path_to_MRI = Path(path_to_MRI)
 
-        mri_data = []
-
-        for path in all_files:
-            data = nib.load(path)
-            mri_data.append(data)
+        mri_data = nib.load(path_to_MRI)
 
         return mri_data

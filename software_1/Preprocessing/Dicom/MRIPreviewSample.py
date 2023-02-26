@@ -8,8 +8,7 @@ def create_gif(img_dicom, fp):      #CREATE DICOM IMAGE ANIMATION
 
     #ASSIGNING DICOM IMAGES TO OBJECT
     for i in range(len(img_dicom)):
-        image=plt.imshow(img_dicom[i].pixel_array , animated=True ,cmap='gray',extent=[0, img_dicom[i].PixelSpacing[0]*len(img_dicom[i].pixel_array[0,:]), 0, img_dicom[i].PixelSpacing[1]*len(img_dicom[i].pixel_array[:,0])])
-        #plt.title(str(img_dicom[i].SliceLocation))
+        image=plt.imshow(img_dicom[i].pixel_array , animated=True ,cmap='gray')
         figures.append([image])
 
     #TRANSFORMING IMAGES INTO GIF

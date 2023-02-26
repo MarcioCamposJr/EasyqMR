@@ -14,7 +14,7 @@ class PreviewGUI(QDialog):
 
         self.imageData=imageData
 
-        info = getInfoDicom(self.imageData[0])
+        info = getInfoDicom(self.imageData[1])
         self.PatientName.setText(str(info[0]))
         self.BodyPartExamined.setText(str(info[1]))
         self.MRAcquisitionType.setText(str(info[2]))

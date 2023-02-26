@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         importData = OpenNII.OpenNII()
 
         if importData.path:
-            image_type = 'NIfTi'
+            image_type = 'NIfTI'
             imageData = importData.imageMRI
             self.Preview(imageData, image_type)
 
