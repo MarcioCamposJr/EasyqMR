@@ -11,6 +11,9 @@ def FormattedMRI(MRI, image_type):
         for i in range(dataPixel.shape[0]):
             FormatMRI.append(MRIImage(MRI,image_type, count= i ))
 
+    print(type(FormatMRI[0].pixel_array))
+    print(FormatMRI[0].pixel_array)
+
     return FormatMRI
 
 class MRIImage():
@@ -29,15 +32,15 @@ class MRIImage():
 
     def FormatDicom(self,MRI):
 
-            self.pixel_array = MRI.pixel_array
-            self.SliceLocation = MRI.SliceLocation
-            self.EchoTime = MRI.EchoTime
-            self.RepetitionTime = MRI.RepetitionTime
-            self.PatientName = MRI.PatientName
-            self.BodyPartExamined = MRI.BodyPartExamined
-            self.MRAcquisitionType = MRI.MRAcquisitionType
-            self.SeriesDescription = MRI.SeriesDescription
-            self.PixelSpacing = MRI.PixelSpacing
+        self.pixel_array = MRI.pixel_array
+        self.SliceLocation = MRI.SliceLocation
+        self.EchoTime = MRI.EchoTime
+        self.RepetitionTime = MRI.RepetitionTime
+        self.PatientName = MRI.PatientName
+        self.BodyPartExamined = MRI.BodyPartExamined
+        self.MRAcquisitionType = MRI.MRAcquisitionType
+        self.SeriesDescription = MRI.SeriesDescription
+        self.PixelSpacing = MRI.PixelSpacing
 
     def FormatNIfTI(self, MRI, count):
 

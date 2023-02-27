@@ -2,8 +2,8 @@ from ImpExpMRI.Dicom import OpenDicom
 from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
 
-from Preprocessing.Dicom.FilterSlices import SlicesMRI
-from Preprocessing.Dicom.getinfo import getInfoDicom
+from Preprocessing.FilterSlices import SlicesMRI
+from Preprocessing.getinfo import getInfoDicom
 from Preprocessing import FormattingMRI
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
@@ -16,7 +16,6 @@ from qtpy.QtGui import QImage, QPixmap
 from qtpy.QtCore import Qt
 
 import sys
-
 
 class MainWindow(QMainWindow):
 
@@ -76,26 +75,33 @@ class MainWindow(QMainWindow):
         self.horizontalSlider.setValue(0)
         self.verticalSlider.setValue(0)
 
+        self.horizontalSlider.setMaximum(len(self.MatrixMRI[:]) - 1)
+
         self.ChangeSlider()
 
     def ChangeSlider(self):
 
         if self.ImageMRI is not None:
 
-            valueH = self.horizontalSlider.value()
-
-            self.horizontalSlider.setMaximum(len(self.MatrixMRI[:]) - 1)
-            self.verticalSlider.setMaximum(len(self.MatrixMRI[valueH][:]) - 1)
-
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
 
-                self.ChangeSliderV()
+                valueH = self.horizontalSlider.value()
+                valueV = self.verticalSlider.value()
 
-                # self.verticalSlider.setMaximum(len(self.MatrixMRI[valueH][:])-1)
-                # self.slider = SliderMRI(self.MatrixMRI, valueH, valueV)
+                self.verticalSlider.setMaximum(len(self.MatrixMRI[valueH][:]) - 1)
+
+                bright = self.Brightness.value()
+                contrast = self.Contrast.value()
+
+                self.slider = SliderMRI(self.MatrixMRI, valueH, valueV, brightess=bright, contrast=contrast)
+
+                scaledimage = self.slider.imageV.scaled(self.mainImage.size(), Qt.KeepAspectRatio)
+                self.mainImage.setPixmap(scaledimage)
 
             else:
                 self.verticalSlider.setMaximum(0)
+
+                valueH = self.horizontalSlider.value()
 
                 bright = self.Brightness.value()
                 contrast = self.Contrast.value()
@@ -105,25 +111,12 @@ class MainWindow(QMainWindow):
                 scaledimage = self.slider.imageH.scaled(self.mainImage.size(), Qt.KeepAspectRatio)
                 self.mainImage.setPixmap(scaledimage)
 
-    def ChangeSliderV(self):
-
-        if self.ImageMRI is not None:
-            valueH = self.horizontalSlider.value()
-            valueV = self.verticalSlider.value()
-
-            bright = self.Brightness.value()
-            contrast = self.Contrast.value()
-
-            self.slider = SliderMRI(self.MatrixMRI, valueH, valueV, brightess=bright, contrast=contrast)
-
-            scaledimage = self.slider.imageV.scaled(self.mainImage.size(), Qt.KeepAspectRatio)
-            self.mainImage.setPixmap(scaledimage)
-
     def MaskSelection(self):
 
-        if self.MatrixMRI is not None:
-            self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), self.Contrast.value())
-            self.mask.full.clicked.connect(self.setMapping)
+        if self.ImageMRI is not None:
+            if len(self.ImageMRI) != len(self.MatrixMRI[:]):
+                self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), self.Contrast.value())
+                self.mask.full.clicked.connect(self.setMapping)
 
     def setMapping(self):
 
