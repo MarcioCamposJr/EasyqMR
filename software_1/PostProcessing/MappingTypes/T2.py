@@ -41,7 +41,7 @@ def mappingT2(image):
                 t2_map[i, j] = -1 / fit[0]
             else:
                 t2_map[i, j] = 0
-    return t2_map
+    return FormatMatrix(t2_map)*2
 
 
 def calc_t2(te, signal):
@@ -52,3 +52,10 @@ def calc_t2(te, signal):
         return -1 / slope
     else:
         return 0
+
+def FormatMatrix(matrix):
+
+    matrix = (matrix - np.min(matrix)) / (np.max(matrix) - np.min(matrix))
+    matrix = (matrix * (2**16)).astype(np.uint16)
+
+    return matrix

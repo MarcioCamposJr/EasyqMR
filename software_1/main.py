@@ -5,6 +5,7 @@ from ImpExpMRI import Preview
 from Preprocessing.FilterSlices import SlicesMRI
 from Preprocessing.getinfo import getInfoDicom
 from Preprocessing import FormattingMRI
+from Preprocessing.GetInfoPixelMatrix import DefSizeConstrast
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
 
@@ -66,7 +67,13 @@ class MainWindow(QMainWindow):
     def CheckImage(self):
 
         self.ImageMRI = self.preview.OrderImageMRI
-        self.MatrixMRI = SlicesMRI(self.preview.OrderImageMRI).Matrix
+        self.MatrixMRI = SlicesMRI(self.ImageMRI).Matrix
+
+        if SlicesMRI(self.ImageMRI).NumberSlices != 0:
+            self.condParam = True
+        else:
+            self.condParam = False
+
 
         self.preview.close()
 
@@ -76,6 +83,12 @@ class MainWindow(QMainWindow):
         self.verticalSlider.setValue(0)
 
         self.horizontalSlider.setMaximum(len(self.MatrixMRI[:]) - 1)
+
+        sizeConstrast = DefSizeConstrast(self.MatrixMRI, self.condParam)
+
+        self.Contrast.setMinimum(sizeConstrast[0])
+        self.Contrast.setMaximum(sizeConstrast[1])
+        self.Contrast.setValue(sizeConstrast[1])
 
         self.ChangeSlider()
 
@@ -93,7 +106,7 @@ class MainWindow(QMainWindow):
                 bright = self.Brightness.value()
                 contrast = self.Contrast.value()
 
-                self.slider = SliderMRI(self.MatrixMRI, valueH, valueV, brightess=bright, contrast=contrast)
+                self.slider = SliderMRI(self.MatrixMRI,valueH, valueV, brightess=bright, contrast=contrast)
 
                 scaledimage = self.slider.imageV.scaled(self.mainImage.size(), Qt.KeepAspectRatio)
                 self.mainImage.setPixmap(scaledimage)
@@ -106,7 +119,7 @@ class MainWindow(QMainWindow):
                 bright = self.Brightness.value()
                 contrast = self.Contrast.value()
 
-                self.slider = SliderMRI(self.MatrixMRI, valueH, brightess=bright, contrast=contrast)
+                self.slider = SliderMRI(self.MatrixMRI ,valueH, brightess=bright, contrast=contrast)
 
                 scaledimage = self.slider.imageH.scaled(self.mainImage.size(), Qt.KeepAspectRatio)
                 self.mainImage.setPixmap(scaledimage)
