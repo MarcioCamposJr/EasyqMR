@@ -1,61 +1,48 @@
 import numpy as np
-
+import cv2
 
 def mappingT2(image):
-    # i = 0
-    # echoTime = []
-    #
-    # while i < len(image) - 1:
-    #     echoTime.append(float(image[i].EchoTime))
-    #     i = i + 1
 
     echo_times = [float(dcm.EchoTime) for dcm in image]
-    image_data = [dcm.pixel_array for dcm in image]
-    image_data = np.array(image_data)
+    data = [dcm.pixel_array for dcm in image]
+    data = np.array(data)
 
-    t2_map = np.zeros(image_data.shape[1:])
-    # array = []
+    # data = cv2.normalize(data, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
+
+    image_data = []
+
+    # for i in range(len(data)):
+    #     image_data.append(cv2.bilateralFilter(data[i], d=5, sigmaColor=10, sigmaSpace=10))
     #
-    # i = 0
-    # j = 0
-    # k = 0
-    # for j in range(image[0].pixel_array.shape[0]):
-    #     for k in range(image[0].pixel_array.shape[1]):
-    #         pixel = []
-    #         while i < len(image) - 1:
-    #             pixel.append(image[i].pixel_array[j][k] + 1)
-    #             i = i + 1
-    #         i = 0
-    #         T2 = calc_t2(echoTime, pixel)
-    #
-    #         mapT2[j][k] = T2
-    #
-    # return mapT2
+    # image_data = cv2.normalize(np.array(image_data), None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
 
-    for i in range(image_data.shape[1]):
-        for j in range(image_data.shape[2]):
-            y = np.log(image_data[:, i, j])
-            x = np.array(echo_times)
-            fit = np.polyfit(x, y, 1)
-            if fit[0] < 0:
-                t2_map[i, j] = -1 / fit[0]
-            else:
-                t2_map[i, j] = 0
-    return FormatMatrix(t2_map)*2
+    t2_map = np.zeros(data.shape[1:])
+    consMag = np.zeros(data.shape[1:])
 
+    for i in range(data.shape[1]):
+        for j in range(data.shape[2]):
+            # if np.any(image_data[:, i, j] > 20):
+                y = np.log(data[:, i, j] + 1)
+                x = np.array(echo_times)
+                fit = np.polyfit(x, y, 1)
+                if fit[0] < 0:
+                    t2_map[i, j] = -1 / fit[0]
 
-def calc_t2(te, signal):
-    signal = np.asarray(signal)
-    log_signal = np.log(signal)
-    slope, intercept = np.polyfit(te, log_signal, 1)
-    if slope != 0:
-        return -1 / slope
-    else:
-        return 0
+                else:
+                    t2_map[i, j] = 0
+                consMag[i, j] = np.exp(fit[1])
+            # else:
+            #     t2_map[i, j] = 0
+
+    return t2_map,consMag
+
+def graphT2(T2,consMag):
+    test =1
 
 def FormatMatrix(matrix):
-
-    matrix = (matrix - np.min(matrix)) / (np.max(matrix) - np.min(matrix))
+    matrix = (matrix - np.amin(matrix)) / (np.amax(matrix) - np.amin(matrix))
     matrix = (matrix * (2**16)).astype(np.uint16)
+
+    matrix = ((2 ** 16) / np.amax(matrix)) * matrix
 
     return matrix

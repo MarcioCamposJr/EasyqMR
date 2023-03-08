@@ -14,9 +14,10 @@ from FunctionDashboard.MaskSelection import Mask
 from qtpy.QtWidgets import QMainWindow, QApplication, QStackedWidget, QSizePolicy
 from qtpy.uic import loadUi
 from qtpy.QtGui import QImage, QPixmap
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt, QPoint
 
 import sys
+import numpy as np
 
 class MainWindow(QMainWindow):
 
@@ -28,7 +29,11 @@ class MainWindow(QMainWindow):
         self.ImageMRI = None
         self.slider = None
 
+        self.map = None
+
         loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\main.ui', self)
+
+        self.setMouseTracking(True)
 
         self.OpenDicom.triggered.connect(self.OpenFolderDicom)
         self.OpenNIFTI.triggered.connect(self.OpenFolderNii)
@@ -40,6 +45,8 @@ class MainWindow(QMainWindow):
         self.Contrast.valueChanged.connect(self.ChangeSlider)
 
         self.Maskselection.clicked.connect(self.MaskSelection)
+
+        self.AnalyzeGraph.clicked.connect(self.butAnalyzeGraph)
 
     def OpenFolderDicom(self):
 
@@ -136,18 +143,40 @@ class MainWindow(QMainWindow):
         MapImage = self.mask.FullImage()
         self.mask.close()
 
+        self.map = MapImage[0]
+
         import matplotlib.pyplot as plt
-        plt.imshow(MapImage, cmap='gray', clim=(0, 256))
+        plt.imshow(self.map, cmap='gray', clim=(0, 256))
         plt.show()
 
-        # def filtro(x):
-        #     return x<256
-        #
-        # MapImage = list(filter(filtro,MapImage))
-
-        image = QImage(MapImage, len(MapImage[:][0]), len(MapImage[:]), QImage.Format_Grayscale16)
+        image = QImage(self.map.tobytes(), self.map.shape[0],self.map.shape[1] , QImage.Format_Grayscale16)
         scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
         self.mapping.setPixmap(scaledimage)
+
+    def butAnalyzeGraph(self, chacked):
+
+        if self.map is not None:
+            if chacked:
+                self.setMouseTracking(True)
+            else:
+                self.setMouseTracking(False)
+        else:
+            self.AnalyzeGraph.setChecked(False)
+
+    def mousePressEvent(self, event):
+
+        mousePos = self.mapFromGlobal(event.globalPos())
+
+        pixmap_pos = mousePos - (self.mainImage.mapToGlobal(QPoint(0,0))-self.mapToGlobal(QPoint(0,0)))
+
+        if self.MatrixMRI is not None:
+
+            widthRescaling = pixmap_pos.x()*np.array(self.MatrixMRI[0][0].pixel_array).shape[0]/self.mainImage.size().width()
+            heightRescaling = pixmap_pos.y()*np.array(self.MatrixMRI[0][0].pixel_array).shape[1]/self.mainImage.size().height()
+
+            if pixmap_pos.x() > 0 and pixmap_pos.y() >0 and pixmap_pos.x() < self.mainImage.size().width() and pixmap_pos.y() < self.mainImage.size().height():
+                graph = 234
+
 
     def setinfo(self):
 

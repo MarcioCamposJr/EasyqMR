@@ -1,7 +1,7 @@
 from qtpy.QtWidgets import QDialog
 from qtpy.QtGui import QPixmap,QImage
 from qtpy.uic import loadUi
-import matplotlib.pyplot as plt
+from PIL import Image
 
 class Mask(QDialog):
     def __init__(self,MatrixMRI, value, contrast):
@@ -13,6 +13,8 @@ class Mask(QDialog):
 
         self.MatrixMRI = MatrixMRI
         self.ValueSlice = value
+
+        self.map = None
 
         # plt.figure(MatrixMRI[self.ValueSlice][0].pixel_array, cmap='gray')
 
@@ -31,8 +33,10 @@ class Mask(QDialog):
 
     def FullImage(self):
         from PostProcessing.MappingTypes.T2 import mappingT2
-        mapT2 = mappingT2(self.MatrixMRI[self.ValueSlice][:])
-        return mapT2
+        mapT2, consMag = mappingT2(self.MatrixMRI[self.ValueSlice][:])
+        self.map = mapT2
+        Image.fromarray(mapT2)
+        return mapT2,consMag
 
     # def RectangularSelec(self):
     #
