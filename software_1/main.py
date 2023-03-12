@@ -8,7 +8,7 @@ from Preprocessing import FormattingMRI
 from Preprocessing.GetInfoPixelMatrix import DefSizeConstrast
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
-
+from FunctionDashboard.ParameterGraphAnalysis import graphParameter
 from FunctionDashboard.MaskSelection import Mask
 
 from qtpy.QtWidgets import QMainWindow, QApplication, QStackedWidget, QSizePolicy
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.ImageMRI = None
         self.slider = None
 
-        self.map = None
+        self.infoMapping = None
 
         loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\main.ui', self)
 
@@ -46,7 +46,8 @@ class MainWindow(QMainWindow):
 
         self.Maskselection.clicked.connect(self.MaskSelection)
 
-        self.AnalyzeGraph.clicked.connect(self.butAnalyzeGraph)
+        self.AnalyzeGraph.clicked.connect(self.buttAnalyzeGraph)
+        self.AnalyzeGraph.released.connect(self.realeaseSetMap)
 
     def OpenFolderDicom(self):
 
@@ -143,40 +144,55 @@ class MainWindow(QMainWindow):
         MapImage = self.mask.FullImage()
         self.mask.close()
 
-        self.map = MapImage[0]
+        self.infoMapping = MapImage
 
-        import matplotlib.pyplot as plt
-        plt.imshow(self.map, cmap='gray', clim=(0, 256))
-        plt.show()
+        mapping = self.infoMapping[0]
 
-        image = QImage(self.map.tobytes(), self.map.shape[0],self.map.shape[1] , QImage.Format_Grayscale16)
+        # import matplotlib.pyplot as plt
+        # plt.imshow(np.array(self.mapping), cmap='gray', clim=(0, 256))
+        # plt.show()
+
+        image = QImage(mapping.tobytes(), mapping.shape[0],mapping.shape[1] , QImage.Format_Grayscale16)
         scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
         self.mapping.setPixmap(scaledimage)
 
-    def butAnalyzeGraph(self, chacked):
-
-        if self.map is not None:
-            if chacked:
+    def buttAnalyzeGraph(self):
+        if self.infoMapping is not None:
+            if self.AnalyzeGraph.isChecked():
                 self.setMouseTracking(True)
             else:
                 self.setMouseTracking(False)
         else:
             self.AnalyzeGraph.setChecked(False)
 
+    def realeaseSetMap(self):
+
+        if self.infoMapping is not None:
+            mapping = self.infoMapping[0]
+
+            image = QImage(mapping.tobytes(), mapping.shape[0],mapping.shape[1] , QImage.Format_Grayscale16)
+            scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
+            self.mapping.setPixmap(scaledimage)
+
     def mousePressEvent(self, event):
+        if self.AnalyzeGraph.isChecked():
+            mousePos = self.mapFromGlobal(event.globalPos())
 
-        mousePos = self.mapFromGlobal(event.globalPos())
-
-        pixmap_pos = mousePos - (self.mainImage.mapToGlobal(QPoint(0,0))-self.mapToGlobal(QPoint(0,0)))
-
-        if self.MatrixMRI is not None:
-
-            widthRescaling = pixmap_pos.x()*np.array(self.MatrixMRI[0][0].pixel_array).shape[0]/self.mainImage.size().width()
-            heightRescaling = pixmap_pos.y()*np.array(self.MatrixMRI[0][0].pixel_array).shape[1]/self.mainImage.size().height()
+            pixmap_pos = mousePos - (self.mainImage.mapToGlobal(QPoint(0,0))-self.mapToGlobal(QPoint(0,0)))
 
             if pixmap_pos.x() > 0 and pixmap_pos.y() >0 and pixmap_pos.x() < self.mainImage.size().width() and pixmap_pos.y() < self.mainImage.size().height():
-                graph = 234
 
+                widthRescaling = int(pixmap_pos.x() * np.array(self.MatrixMRI[0][0].pixel_array).shape[0] / self.mainImage.size().width())
+                heightRescaling = int(pixmap_pos.y() * np.array(self.MatrixMRI[0][0].pixel_array).shape[1] / self.mainImage.size().height())
+
+                indexMRI = self.horizontalSlider.value()
+
+                graph = graphParameter(self.MatrixMRI[indexMRI], self.infoMapping, widthRescaling, heightRescaling)
+
+                self.mapping.setPixmap(graph.graph)
+
+        else:
+            super().mousePressEvent(event)
 
     def setinfo(self):
 

@@ -36,9 +36,6 @@ def mappingT2(image):
 
     return t2_map,consMag
 
-def graphT2(T2,consMag):
-    test =1
-
 def FormatMatrix(matrix):
     matrix = (matrix - np.amin(matrix)) / (np.amax(matrix) - np.amin(matrix))
     matrix = (matrix * (2**16)).astype(np.uint16)
