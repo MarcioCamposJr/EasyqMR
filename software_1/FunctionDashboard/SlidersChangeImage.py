@@ -1,6 +1,8 @@
 from PIL import Image
 from qtpy.QtGui import QImage,QPixmap
 import numpy as np
+import cv2
+from Preprocessing.FormattingMRI import FormatMatrix
 
 class SliderMRI():
 
@@ -12,9 +14,11 @@ class SliderMRI():
     def SliceMRI(self,image,value,cont,valueV, brightess):
 
         if valueV is not None:
-            img = Image.fromarray( (image[value][0].pixel_array*cont) + brightess )
+            image = self.apply_contrast_brightness(image[value][0].pixel_array,cont,brightess)
+            img = Image.fromarray(image)
         else:
-            img = Image.fromarray((image[value].pixel_array*cont) + brightess )
+            image = self.apply_contrast_brightness(image[value].pixel_array, cont, brightess)
+            img = Image.fromarray(image)
 
         dataImg = QImage(img.tobytes(), img.size[0], img.size[1], QImage.Format_Grayscale16)
 
@@ -23,7 +27,9 @@ class SliderMRI():
     def ParameterMRI(self, image, valueH, valueV, cont, brightess):
 
         if valueV is not None:
-            img = Image.fromarray((image[valueH][valueV].pixel_array*cont) + brightess )
+            image = self.apply_contrast_brightness(image[valueH][valueV].pixel_array, cont, brightess)
+
+            img = Image.fromarray(image)
             dataImg = QImage(img.tobytes(), img.size[0], img.size[1], QImage.Format_Grayscale16)
 
             return QPixmap.fromImage(dataImg)
@@ -31,4 +37,16 @@ class SliderMRI():
         else:
             return None
 
+    # def adjust_contrast_brightness(self, matrix, contrast, brightness):
+    #     new_matrix = np.clip((matrix - 32768) * contrast + 32768 + brightness * 65535, 0, 65535).astype(np.uint16)
+    #     return new_matrix
 
+    def apply_contrast_brightness(self,image , alpha, beta):
+
+        image = (alpha/100) * image + beta
+
+        image = np.clip(image, 10, (2 ** 16) - 2)
+
+        image = FormatMatrix(image)
+
+        return image

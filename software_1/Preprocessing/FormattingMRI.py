@@ -22,10 +22,27 @@ def FormattedMRI(MRI, image_type):
         for i in range(lenMRI):
             FormatMRI.append(MRIImage(MRI,image_type, count= i , data = dataPixel))
 
-    print(type(FormatMRI[0].pixel_array))
-    print(FormatMRI[0].pixel_array)
-
     return FormatMRI
+
+def FormatMatrix(matrix):
+
+    matrix = np.round(matrix)
+
+    # matrix = np.clip(matrix, 0, (2 ** 16) - 2)
+
+    matrix = (matrix - np.min(matrix)) / ((np.max(matrix) - np.min(matrix)))
+
+    matrix = (matrix * (2 ** 16))
+
+    matrix = np.round(matrix).astype(np.uint16)
+
+    # print(np.max(matrix))
+    #
+    # matrix = matrix - 1
+    #
+    # matrix = np.clip(matrix, 1, 65000)
+
+    return matrix
 
 class MRIImage():
 
@@ -44,7 +61,7 @@ class MRIImage():
             self.ImageFormated = self.FormatNIfTI(MRI, self.count, self.data)
 
     def FormatDicom(self,MRI):
-        self.pixel_array = self.FormatMatrix(MRI.pixel_array)
+        self.pixel_array = FormatMatrix(MRI.pixel_array)
         self.SliceLocation = MRI.SliceLocation
         self.EchoTime = MRI.EchoTime
         self.RepetitionTime = MRI.RepetitionTime
@@ -56,7 +73,7 @@ class MRIImage():
 
     def FormatNIfTI(self, MRI, count, data):
 
-        self.pixel_array = self.FormatMatrix(data[count])
+        self.pixel_array = FormatMatrix(data[count])
         self.SliceLocation = None
         self.RepetitionTime = MRI.header.get('repetition_time')
         self.EchoTime= MRI.header.get('echo_time')
@@ -66,9 +83,9 @@ class MRIImage():
         self.SeriesDescription = None
         self.PixelSpacing = None
 
-    def FormatMatrix(self, matrix):
-
-        # matrix = (matrix - np.min(matrix)) /((np.max(matrix) - np.min(matrix)-200))
-        matrix = (matrix).astype(np.uint16)
-
-        return matrix
+    # def FormatMatrix(self, matrix):
+    #
+    #     matrix = (matrix - np.min(matrix)) /((np.max(matrix) - np.min(matrix)))
+    #
+    #     matrix = (matrix*(2**16)).astype(np.uint16)
+    #     return matrix

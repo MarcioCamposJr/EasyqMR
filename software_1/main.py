@@ -6,6 +6,7 @@ from Preprocessing.FilterSlices import SlicesMRI
 from Preprocessing.getinfo import getInfoDicom
 from Preprocessing import FormattingMRI
 from Preprocessing.GetInfoPixelMatrix import DefSizeConstrast
+from Preprocessing.BrainExtraction import bet
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
 from FunctionDashboard.ParameterGraphAnalysis import graphParameter
@@ -44,6 +45,8 @@ class MainWindow(QMainWindow):
         self.Brightness.valueChanged.connect(self.ChangeSlider)
         self.Contrast.valueChanged.connect(self.ChangeSlider)
 
+        self.bet.clicked.connect(self.Bet)
+
         self.Maskselection.clicked.connect(self.MaskSelection)
 
         self.AnalyzeGraph.clicked.connect(self.buttAnalyzeGraph)
@@ -75,13 +78,26 @@ class MainWindow(QMainWindow):
     def CheckImage(self):
 
         self.ImageMRI = self.preview.OrderImageMRI
-        self.MatrixMRI = SlicesMRI(self.ImageMRI).Matrix
+        self.SlicesMRI = SlicesMRI(self.ImageMRI)
+        self.MatrixMRI = self.SlicesMRI.Matrix
+        self.OnlySlices = self.SlicesMRI.OnlySlices
 
-        if SlicesMRI(self.ImageMRI).NumberSlices != 0:
+        import nibabel as nib
+
+        slices = []
+
+        for i in range(len(self.OnlySlices)):
+
+            slices.append(np.array(self.OnlySlices[i].pixel_array))
+
+
+        imagem_nifti = nib.Nifti1Image(np.array(slices), np.eye(4))
+        nib.save(imagem_nifti, 'C:/Users/marci/OneDrive/Desktop/MRI/NIFTI/testConvert/test2')
+
+        if self.SlicesMRI.NumberSlices != 0:
             self.condParam = True
         else:
             self.condParam = False
-
 
         self.preview.close()
 
@@ -92,11 +108,11 @@ class MainWindow(QMainWindow):
 
         self.horizontalSlider.setMaximum(len(self.MatrixMRI[:]) - 1)
 
-        sizeConstrast = DefSizeConstrast(self.MatrixMRI, self.condParam)
+        # sizeConstrast = DefSizeConstrast(self.MatrixMRI, self.condParam)
 
-        self.Contrast.setMinimum(sizeConstrast[0])
-        self.Contrast.setMaximum(sizeConstrast[1])
-        self.Contrast.setValue(sizeConstrast[1])
+        self.Contrast.setRange(0,200)
+
+        self.Contrast.setValue(100)
 
         self.ChangeSlider()
 
@@ -125,7 +141,7 @@ class MainWindow(QMainWindow):
                 valueH = self.horizontalSlider.value()
 
                 bright = self.Brightness.value()
-                contrast = self.Contrast.value()
+                contrast = (self.Contrast.value())
 
                 self.slider = SliderMRI(self.MatrixMRI ,valueH, brightess=bright, contrast=contrast)
 
@@ -136,7 +152,7 @@ class MainWindow(QMainWindow):
 
         if self.ImageMRI is not None:
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
-                self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), self.Contrast.value())
+                self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), (self.Contrast.value())/10)
                 self.mask.full.clicked.connect(self.setMapping)
 
     def setMapping(self):
@@ -148,9 +164,9 @@ class MainWindow(QMainWindow):
 
         mapping = self.infoMapping[0]
 
-        # import matplotlib.pyplot as plt
-        # plt.imshow(np.array(self.mapping), cmap='gray', clim=(0, 256))
-        # plt.show()
+        import matplotlib.pyplot as plt
+        plt.imshow(np.array(mapping), cmap='gray', clim=(0, 65536))
+        plt.show()
 
         image = QImage(mapping.tobytes(), mapping.shape[0],mapping.shape[1] , QImage.Format_Grayscale16)
         scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
@@ -193,6 +209,13 @@ class MainWindow(QMainWindow):
 
         else:
             super().mousePressEvent(event)
+
+    def Bet(self):
+        if self.ImageMRI is not None:
+            if len(self.ImageMRI) != len(self.MatrixMRI[:]):
+                self.MatrixMRI = bet(self.MatrixMRI)
+                self.ChangeSlider()
+
 
     def setinfo(self):
 

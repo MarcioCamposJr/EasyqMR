@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from Preprocessing.FormattingMRI import FormatMatrix
 
 def mappingT2(image):
 
@@ -34,12 +35,4 @@ def mappingT2(image):
             # else:
             #     t2_map[i, j] = 0
 
-    return t2_map,consMag
-
-def FormatMatrix(matrix):
-    matrix = (matrix - np.amin(matrix)) / (np.amax(matrix) - np.amin(matrix))
-    matrix = (matrix * (2**16)).astype(np.uint16)
-
-    matrix = ((2 ** 16) / np.amax(matrix)) * matrix
-
-    return matrix
+    return FormatMatrix(t2_map),consMag

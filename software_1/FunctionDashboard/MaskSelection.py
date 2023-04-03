@@ -2,6 +2,7 @@ from qtpy.QtWidgets import QDialog
 from qtpy.QtGui import QPixmap,QImage
 from qtpy.uic import loadUi
 from PIL import Image
+from Preprocessing.FormattingMRI import FormatMatrix
 
 class Mask(QDialog):
     def __init__(self,MatrixMRI, value, contrast):
@@ -20,7 +21,7 @@ class Mask(QDialog):
 
         # dataImg = QImage(img.tobytes("raw", "I;16"), img.size[0], img.size[1], QImage.Format_Grayscale16)
 
-        image = QImage(MatrixMRI[self.ValueSlice][0].pixel_array*contrast ,MatrixMRI[self.ValueSlice][0].pixel_array.shape[0],MatrixMRI[self.ValueSlice][0].pixel_array.shape[1], QImage.Format_Grayscale16)
+        image = QImage(FormatMatrix(MatrixMRI[self.ValueSlice][0].pixel_array*contrast) ,MatrixMRI[self.ValueSlice][0].pixel_array.shape[0],MatrixMRI[self.ValueSlice][0].pixel_array.shape[1], QImage.Format_Grayscale16)
 
         self.image.setPixmap(QPixmap(image))
 
