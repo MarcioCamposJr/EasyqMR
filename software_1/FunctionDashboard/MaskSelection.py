@@ -5,7 +5,7 @@ from PIL import Image
 from Preprocessing.FormattingMRI import FormatMatrix
 
 class Mask(QDialog):
-    def __init__(self,MatrixMRI, value, contrast):
+    def __init__(self,MatrixMRI, value):
 
         super(Mask, self).__init__()
         loadUi("G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\MaskSelection.ui", self)
@@ -21,7 +21,7 @@ class Mask(QDialog):
 
         # dataImg = QImage(img.tobytes("raw", "I;16"), img.size[0], img.size[1], QImage.Format_Grayscale16)
 
-        image = QImage(FormatMatrix(MatrixMRI[self.ValueSlice][0].pixel_array*contrast) ,MatrixMRI[self.ValueSlice][0].pixel_array.shape[0],MatrixMRI[self.ValueSlice][0].pixel_array.shape[1], QImage.Format_Grayscale16)
+        image = QImage(FormatMatrix(MatrixMRI[self.ValueSlice][0].pixel_array), MatrixMRI[self.ValueSlice][0].pixel_array.shape[0],MatrixMRI[self.ValueSlice][0].pixel_array.shape[1], QImage.Format_Grayscale16)
 
         self.image.setPixmap(QPixmap(image))
 

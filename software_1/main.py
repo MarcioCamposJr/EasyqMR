@@ -7,6 +7,7 @@ from Preprocessing.getinfo import getInfoDicom
 from Preprocessing import FormattingMRI
 from Preprocessing.GetInfoPixelMatrix import DefSizeConstrast
 from Preprocessing.BrainExtraction import bet
+from Preprocessing.MRIcoregistration import register_slices
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
 from FunctionDashboard.ParameterGraphAnalysis import graphParameter
@@ -15,7 +16,7 @@ from FunctionDashboard.MaskSelection import Mask
 from qtpy.QtWidgets import QMainWindow, QApplication, QStackedWidget, QSizePolicy
 from qtpy.uic import loadUi
 from qtpy.QtGui import QImage, QPixmap
-from qtpy.QtCore import Qt, QPoint
+from qtpy.QtCore import Qt, QPoint, QPropertyAnimation
 
 import sys
 import numpy as np
@@ -46,6 +47,8 @@ class MainWindow(QMainWindow):
         self.Contrast.valueChanged.connect(self.ChangeSlider)
 
         self.bet.clicked.connect(self.Bet)
+
+        self.co_registration.clicked.connect(self.Co_registration)
 
         self.Maskselection.clicked.connect(self.MaskSelection)
 
@@ -82,22 +85,22 @@ class MainWindow(QMainWindow):
         self.MatrixMRI = self.SlicesMRI.Matrix
         self.OnlySlices = self.SlicesMRI.OnlySlices
 
-        import nibabel as nib
+        # import nibabel as nib
+        #
+        # slices = []
+        #
+        # for i in range(len(self.OnlySlices)):
+        #
+        #     slices.append(np.array(self.OnlySlices[i].pixel_array))
+        #
+        #
+        # imagem_nifti = nib.Nifti1Image(np.array(slices), np.eye(4))
+        # nib.save(imagem_nifti, 'C:/Users/marci/OneDrive/Desktop/MRI/NIFTI/testConvert/test2')
 
-        slices = []
-
-        for i in range(len(self.OnlySlices)):
-
-            slices.append(np.array(self.OnlySlices[i].pixel_array))
-
-
-        imagem_nifti = nib.Nifti1Image(np.array(slices), np.eye(4))
-        nib.save(imagem_nifti, 'C:/Users/marci/OneDrive/Desktop/MRI/NIFTI/testConvert/test2')
-
-        if self.SlicesMRI.NumberSlices != 0:
-            self.condParam = True
-        else:
-            self.condParam = False
+        # if self.SlicesMRI.NumberSlices != 0:
+        #     self.condParam = True
+        # else:
+        #     self.condParam = False
 
         self.preview.close()
 
@@ -110,7 +113,7 @@ class MainWindow(QMainWindow):
 
         # sizeConstrast = DefSizeConstrast(self.MatrixMRI, self.condParam)
 
-        self.Contrast.setRange(0,200)
+        self.Contrast.setRange(100,300)
 
         self.Contrast.setValue(100)
 
@@ -152,7 +155,7 @@ class MainWindow(QMainWindow):
 
         if self.ImageMRI is not None:
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
-                self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value(), (self.Contrast.value())/10)
+                self.mask = Mask(self.MatrixMRI, self.horizontalSlider.value())
                 self.mask.full.clicked.connect(self.setMapping)
 
     def setMapping(self):
@@ -165,8 +168,10 @@ class MainWindow(QMainWindow):
         mapping = self.infoMapping[0]
 
         import matplotlib.pyplot as plt
-        plt.imshow(np.array(mapping), cmap='gray', clim=(0, 65536))
+        plt.imshow(np.array(mapping), cmap='gray', clim=(0,800))
         plt.show()
+
+        print(np.amax(np.array(mapping)))
 
         image = QImage(mapping.tobytes(), mapping.shape[0],mapping.shape[1] , QImage.Format_Grayscale16)
         scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
@@ -210,12 +215,46 @@ class MainWindow(QMainWindow):
         else:
             super().mousePressEvent(event)
 
+    def mouseMoveEvent(self, event):
+        if self.ImageMRI is not None:
+            mousePos = self.mapFromGlobal(event.globalPos())
+
+            pixmap_pos = mousePos - (self.mainImage.mapToGlobal(QPoint(0, 0)) - self.mapToGlobal(QPoint(0, 0)))
+
+            if pixmap_pos.x() > 0 and pixmap_pos.y() > 0 and pixmap_pos.x() < self.mainImage.size().width() and pixmap_pos.y() < self.mainImage.size().height():
+                widthRescaling = int(pixmap_pos.x() * np.array(self.MatrixMRI[0][0].pixel_array).shape[0] / self.mainImage.size().width())
+                heightRescaling = int(pixmap_pos.y() * np.array(self.MatrixMRI[0][0].pixel_array).shape[1] / self.mainImage.size().height())
+
+                self.showxcoor.setText("x =" + str(widthRescaling))
+                self.showycoor.setText("y =" + str(heightRescaling))
+
+            else:
+                anim = QPropertyAnimation(self.showycoor, b"opacity")
+                anim.setDuration(1000)
+                anim.setStartValue(1.0)
+                anim.setEndValue(0.0)
+                anim.finished.connect(self.showycoor.hide)
+                anim.start()
+
+                anim2 = QPropertyAnimation(self.showxcoor, b"opacity")
+                anim2.setDuration(1000)
+                anim2.setStartValue(1.0)
+                anim2.setEndValue(0.0)
+                anim2.finished.connect(self.showxcoor.hide)
+                anim2.start()
+
+
     def Bet(self):
         if self.ImageMRI is not None:
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
                 self.MatrixMRI = bet(self.MatrixMRI)
                 self.ChangeSlider()
 
+    def Co_registration(self):
+        if self.ImageMRI is not None:
+            if len(self.ImageMRI) != len(self.MatrixMRI[:]):
+                self.MatrixMRI = register_slices(self.MatrixMRI)
+                self.ChangeSlider()
 
     def setinfo(self):
 

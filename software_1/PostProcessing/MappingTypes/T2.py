@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from Preprocessing.FormattingMRI import FormatMatrix
+from Preprocessing.FormattingMRI import FormatParamMap
 
 def mappingT2(image):
 
@@ -25,7 +25,7 @@ def mappingT2(image):
             # if np.any(image_data[:, i, j] > 20):
                 y = np.log(data[:, i, j] + 1)
                 x = np.array(echo_times)
-                fit = np.polyfit(x, y, 1)
+                fit = np.polyfit(x, y, 1, p0=[1,fit[0]])
                 if fit[0] < 0:
                     t2_map[i, j] = -1 / fit[0]
 
@@ -35,4 +35,4 @@ def mappingT2(image):
             # else:
             #     t2_map[i, j] = 0
 
-    return FormatMatrix(t2_map),consMag
+    return t2_map,consMag

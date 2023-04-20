@@ -24,15 +24,41 @@ def FormattedMRI(MRI, image_type):
 
     return FormatMRI
 
-def FormatMatrix(matrix):
+def FormatParamMap(matrix):
 
-    matrix = np.round(matrix)
+    max = np.amax(matrix)
 
-    # matrix = np.clip(matrix, 0, (2 ** 16) - 2)
+    matrix = np.clip(matrix, 0, max-1)
 
     matrix = (matrix - np.min(matrix)) / ((np.max(matrix) - np.min(matrix)))
 
-    matrix = (matrix * (2 ** 16))
+    matrix = (matrix * ((2 ** 16)-1))
+
+    matrix = np.round(matrix).astype(np.uint16)
+
+    return matrix
+
+    #Pegar maior intensidade de pixle, normalizar e ajustar para 16 bits
+
+def FormatTo16bits(matrix):
+
+    matrix = (matrix - np.min(matrix)) / ((np.max(matrix) - np.min(matrix)))
+
+    matrix = (matrix * ((2 ** 16)-1))
+
+    matrix = np.round(matrix).astype(np.uint16)
+
+    return matrix
+
+def FormatMatrix(matrix):
+
+    # matrix = np.round(matrix)
+
+    matrix = np.clip(matrix, 0, ((2 ** 16)-1))
+
+    matrix = (matrix - np.min(matrix)) / (np.max(matrix) - np.min(matrix))
+
+    matrix = (matrix * ((2 ** 16)-1))
 
     matrix = np.round(matrix).astype(np.uint16)
 
@@ -61,7 +87,7 @@ class MRIImage():
             self.ImageFormated = self.FormatNIfTI(MRI, self.count, self.data)
 
     def FormatDicom(self,MRI):
-        self.pixel_array = FormatMatrix(MRI.pixel_array)
+        self.pixel_array = FormatTo16bits(MRI.pixel_array)
         self.SliceLocation = MRI.SliceLocation
         self.EchoTime = MRI.EchoTime
         self.RepetitionTime = MRI.RepetitionTime
@@ -73,7 +99,7 @@ class MRIImage():
 
     def FormatNIfTI(self, MRI, count, data):
 
-        self.pixel_array = FormatMatrix(data[count])
+        self.pixel_array = FormatTo16bits(data[count])
         self.SliceLocation = None
         self.RepetitionTime = MRI.header.get('repetition_time')
         self.EchoTime= MRI.header.get('echo_time')

@@ -43,9 +43,7 @@ class SliderMRI():
 
     def apply_contrast_brightness(self,image , alpha, beta):
 
-        image = (alpha/100) * image + beta
-
-        image = np.clip(image, 10, (2 ** 16) - 2)
+        image = ((alpha/100) * image) + beta
 
         image = FormatMatrix(image)
 
