@@ -25,7 +25,7 @@ def mappingT2(image):
             # if np.any(image_data[:, i, j] > 20):
                 y = np.log(data[:, i, j] + 1)
                 x = np.array(echo_times)
-                fit = np.polyfit(x, y, 1, p0=[1,fit[0]])
+                fit = np.polyfit(x, y, 1)
                 if fit[0] < 0:
                     t2_map[i, j] = -1 / fit[0]
 

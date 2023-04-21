@@ -180,7 +180,7 @@
              <string notr="true">color:white</string>
             </property>
             <property name="text">
-             <string>a</string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

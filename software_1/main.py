@@ -208,7 +208,9 @@ class MainWindow(QMainWindow):
 
                 indexMRI = self.horizontalSlider.value()
 
-                graph = graphParameter(self.MatrixMRI[indexMRI], self.infoMapping, widthRescaling, heightRescaling)
+                size = self.mapping.size()
+
+                graph = graphParameter(self.MatrixMRI[indexMRI], self.infoMapping, widthRescaling, heightRescaling, size)
 
                 self.mapping.setPixmap(graph.graph)
 
@@ -242,7 +244,6 @@ class MainWindow(QMainWindow):
                 anim2.setEndValue(0.0)
                 anim2.finished.connect(self.showxcoor.hide)
                 anim2.start()
-
 
     def Bet(self):
         if self.ImageMRI is not None:

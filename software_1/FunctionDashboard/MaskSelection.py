@@ -17,24 +17,47 @@ class Mask(QDialog):
 
         self.map = None
 
-        # plt.figure(MatrixMRI[self.ValueSlice][0].pixel_array, cmap='gray')
+        self.horizontalScrollBar.setMinimum(0)
+        self.horizontalScrollBar.setMaximum(len(self.MatrixMRI[:])-1)
 
-        # dataImg = QImage(img.tobytes("raw", "I;16"), img.size[0], img.size[1], QImage.Format_Grayscale16)
+        self.spinBox.setMinimum(0)
+        self.spinBox.setMaximum(len(self.MatrixMRI[:])-1)
 
-        image = QImage(FormatMatrix(MatrixMRI[self.ValueSlice][0].pixel_array), MatrixMRI[self.ValueSlice][0].pixel_array.shape[0],MatrixMRI[self.ValueSlice][0].pixel_array.shape[1], QImage.Format_Grayscale16)
+        self.horizontalScrollBar.valueChanged.connect(self.ChangeImage)
+        self.spinBox.valueChanged.connect(self.ChangeImageSP)
 
-        self.image.setPixmap(QPixmap(image))
+        self.horizontalScrollBar.setValue(self.ValueSlice)
+        self.spinBox.setValue(self.ValueSlice)
 
-        # self.image.setPixmap(QPixmap(plt.imshow(MatrixMRI[self.ValueSlice][0].pixel_array, cmap='gray')))
+        self.ChangeImage()
 
+        self.full.clicked.connect(self.FullImage)
         # self.selection.clicked.connect(self.RectangularSelec)
         # self.hands.clicked.connect(self.HandsFree)
 
         self.show()
 
+    def ChangeImage(self, value=None):
+
+        if value is None:
+            value = self.horizontalScrollBar.value()
+            self.spinBox.setValue(value)
+
+        image = QImage(FormatMatrix(self.MatrixMRI[value][0].pixel_array), self.MatrixMRI[value][0].pixel_array.shape[0], self.MatrixMRI[value][0].pixel_array.shape[1], QImage.Format_Grayscale16)
+
+        self.image.setPixmap(QPixmap(image))
+
+    def ChangeImageSP(self):
+        value = self.spinBox.value()
+
+        self.horizontalScrollBar.setValue(value)
+
+        self.ChangeImage(value=value)
+
     def FullImage(self):
         from PostProcessing.MappingTypes.T2 import mappingT2
-        mapT2, consMag = mappingT2(self.MatrixMRI[self.ValueSlice][:])
+        value = self.horizontalScrollBar.value()
+        mapT2, consMag = mappingT2(self.MatrixMRI[value][:])
         self.map = mapT2
         Image.fromarray(mapT2)
         return mapT2,consMag

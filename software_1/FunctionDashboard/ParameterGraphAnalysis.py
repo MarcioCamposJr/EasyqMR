@@ -2,14 +2,15 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from PyQt5.QtGui import QPixmap
+from qtpy.QtCore import Qt
 
 class graphParameter():
 
-    def __init__(self, MRIData, map, pixelWidht, pixelHeight, TypeImage = None):
+    def __init__(self, MRIData, map, pixelWidht, pixelHeight, size, TypeImage = None):
 
-        self.graph = self.mapT2(MRIData, map, pixelWidht, pixelHeight)
+        self.graph = self.mapT2(MRIData, map, pixelWidht, pixelHeight,size)
 
-    def mapT2(self,MRIData, map, pixelWidht, pixelHeight):
+    def mapT2(self,MRIData, map, pixelWidht, pixelHeight,size):
 
         echoTime = [float(dcm.EchoTime) for dcm in MRIData]
         IntenPixel = [dcm.pixel_array[pixelWidht][pixelHeight] for dcm in MRIData]
@@ -28,7 +29,7 @@ class graphParameter():
 
         canvas = FigureCanvas(fig)
 
-        pixmap = QPixmap(canvas.size())
+        pixmap = QPixmap(canvas.size()).scaled(size, Qt.KeepAspectRatio)
         canvas.render(pixmap)
 
         return pixmap
