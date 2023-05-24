@@ -19,18 +19,18 @@ class graphParameter():
         ConsMag = map[1][pixelWidht, pixelHeight]
 
         b = -1/T2
-
         x_line = np.linspace(echoTime[0], echoTime[len(echoTime)-1], int(echoTime[len(echoTime)-1])*50)
         y_line = ConsMag * np.exp(b * x_line)
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(int(size.width()/110), int(size.height()/120)), dpi=280)
         ax.scatter(echoTime, IntenPixel)
         ax.plot(x_line, y_line)
 
         canvas = FigureCanvas(fig)
 
-        pixmap = QPixmap(canvas.size()).scaled(size, Qt.KeepAspectRatio)
+        pixmap = QPixmap(canvas.size())
         canvas.render(pixmap)
+        pixmap = pixmap.scaled(size, Qt.KeepAspectRatio)
 
         return pixmap
 

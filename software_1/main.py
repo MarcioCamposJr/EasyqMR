@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from ImpExpMRI.Dicom import OpenDicom
 from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
@@ -5,7 +7,6 @@ from ImpExpMRI import Preview
 from Preprocessing.FilterSlices import SlicesMRI
 from Preprocessing.getinfo import getInfoDicom
 from Preprocessing import FormattingMRI
-from Preprocessing.GetInfoPixelMatrix import DefSizeConstrast
 from Preprocessing.BrainExtraction import bet
 from Preprocessing.MRIcoregistration import register_slices
 
@@ -168,7 +169,7 @@ class MainWindow(QMainWindow):
         mapping = self.infoMapping[0]
 
         import matplotlib.pyplot as plt
-        plt.imshow(np.array(mapping), cmap='gray', clim=(0,800))
+        plt.imshow(np.array(mapping), cmap='rainbow', clim=(0,4000))
         plt.show()
 
         print(np.amax(np.array(mapping)))
@@ -194,6 +195,7 @@ class MainWindow(QMainWindow):
             image = QImage(mapping.tobytes(), mapping.shape[0],mapping.shape[1] , QImage.Format_Grayscale16)
             scaledimage = QPixmap(image).scaled(self.mapping.size(), Qt.KeepAspectRatio)
             self.mapping.setPixmap(scaledimage)
+            plt.close()
 
     def mousePressEvent(self, event):
         if self.AnalyzeGraph.isChecked():
@@ -205,12 +207,11 @@ class MainWindow(QMainWindow):
 
                 widthRescaling = int(pixmap_pos.x() * np.array(self.MatrixMRI[0][0].pixel_array).shape[0] / self.mainImage.size().width())
                 heightRescaling = int(pixmap_pos.y() * np.array(self.MatrixMRI[0][0].pixel_array).shape[1] / self.mainImage.size().height())
-
+                print(str(self.main))
                 indexMRI = self.horizontalSlider.value()
 
                 size = self.mapping.size()
-
-                graph = graphParameter(self.MatrixMRI[indexMRI], self.infoMapping, widthRescaling, heightRescaling, size)
+                graph = graphParameter(self.MatrixMRI[indexMRI], self.infoMapping, heightRescaling, widthRescaling, size)
 
                 self.mapping.setPixmap(graph.graph)
 

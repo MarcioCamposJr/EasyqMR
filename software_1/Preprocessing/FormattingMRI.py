@@ -99,7 +99,7 @@ class MRIImage():
 
     def FormatNIfTI(self, MRI, count, data):
 
-        self.pixel_array = FormatTo16bits(data[count])
+        self.pixel_array = FormatTo16bits(data)
         self.SliceLocation = None
         self.RepetitionTime = MRI.header.get('repetition_time')
         self.EchoTime= MRI.header.get('echo_time')
