@@ -1,6 +1,6 @@
 from pathlib import Path
 import pydicom as dicom
-from PyQt5.QtWidgets import QFileDialog,QDialog
+from qtpy.QtWidgets import QFileDialog,QDialog
 
 class OpenMRI(QDialog):
     def __init__(self):

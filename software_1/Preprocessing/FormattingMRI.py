@@ -5,8 +5,9 @@ def FormattedMRI(MRI, image_type):
     FormatMRI = []
 
     if image_type == 'DICOM':
-        for i in range(len(MRI)):
-            FormatMRI.append(MRIImage(MRI[i], image_type))
+        #for i in range(len(MRI)): #Modelo antigo
+        return MRIImage(MRI, image_type)
+
 
     if image_type == 'NIfTI':
         dataPixel = MRI.get_fdata()
@@ -19,10 +20,10 @@ def FormattedMRI(MRI, image_type):
             lenMRI = dataPixel.shape[0]
             dataPixel = dataPixel[1:]
 
-        for i in range(lenMRI):
+        for i in range(int(lenMRI)):
             FormatMRI.append(MRIImage(MRI,image_type, count= i , data = dataPixel))
 
-    return FormatMRI
+        return FormatMRI
 
 def FormatParamMap(matrix):
 
@@ -97,6 +98,8 @@ class MRIImage():
         self.SeriesDescription = MRI.SeriesDescription
         self.PixelSpacing = MRI.PixelSpacing
 
+        self.Type = 'DICOM'
+
     def FormatNIfTI(self, MRI, count, data):
 
         self.pixel_array = FormatTo16bits(data)
@@ -108,6 +111,8 @@ class MRIImage():
         self.MRAcquisitionType = None
         self.SeriesDescription = None
         self.PixelSpacing = None
+
+        self.Type = 'NIfTI'
 
     # def FormatMatrix(self, matrix):
     #

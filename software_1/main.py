@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from ImpExpMRI.Dicom import OpenDicom
 from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
+from ImpExpMRI import OpenMRI
 
 from Preprocessing.FilterSlices import SlicesMRI
 from Preprocessing.getinfo import getInfoDicom
@@ -40,6 +41,7 @@ class MainWindow(QMainWindow):
 
         self.OpenDicom.triggered.connect(self.OpenFolderDicom)
         self.OpenNIFTI.triggered.connect(self.OpenFolderNii)
+        self.test.triggered.connect(self.OpenMRI)
 
         self.horizontalSlider.valueChanged.connect(self.ChangeSlider)
         self.verticalSlider.valueChanged.connect(self.ChangeSlider)
@@ -56,6 +58,8 @@ class MainWindow(QMainWindow):
         self.AnalyzeGraph.clicked.connect(self.buttAnalyzeGraph)
         self.AnalyzeGraph.released.connect(self.realeaseSetMap)
 
+    def OpenMRI(self):
+        self.Open = OpenMRI.OpenMRI()
     def OpenFolderDicom(self):
 
         importData = OpenDicom.OpenMRI()
@@ -267,29 +271,33 @@ class MainWindow(QMainWindow):
         # self.desc.setText(str(info[3]))
         # self.variation.setText(str(variation_detection(image_mri)))
         # self.clss.setText(str(classification(image_mri)))
+    def closeEvent(self, event):
+        # Este slot será chamado quando a janela for fechada
+        # Encerra o programa
+        app.quit()
 
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
 
-app = QApplication(sys.argv)
+    screen = app.primaryScreen()
+    sizeScreen = screen.availableGeometry()
 
-screen = app.primaryScreen()
-sizeScreen = screen.availableGeometry()
+    mainwindow = MainWindow()
+    widget = QStackedWidget()
+    widget.addWidget(mainwindow)
 
-mainwindow = MainWindow()
-widget = QStackedWidget()
-widget.addWidget(mainwindow)
+    widget.setWindowTitle("EasyqMR")
 
-widget.setWindowTitle("EasyqMR")
+    policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+    policy.setHeightForWidth(True)
+    widget.setSizePolicy(policy)
 
-policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-policy.setHeightForWidth(True)
-widget.setSizePolicy(policy)
+    widget.setMinimumWidth(sizeScreen.width()*(2/3))
+    widget.setMinimumHeight(sizeScreen.height()*(2/3))
 
-widget.setMinimumWidth(sizeScreen.width()*(2/3))
-widget.setMinimumHeight(sizeScreen.height()*(2/3))
+    widget.showMaximized()
 
-widget.showMaximized()
+    widget.show()
 
-widget.show()
-
-app.exec_()
-sys.exit(app.exec_())
+    app.exec_()
+    sys.exit(app.exec_())
