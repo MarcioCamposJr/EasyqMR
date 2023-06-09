@@ -5,9 +5,9 @@ from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
 from ImpExpMRI import OpenMRI
 
-from Preprocessing.FilterSlices import SlicesMRI
-from Preprocessing.getinfo import getInfoDicom
-from Preprocessing import FormattingMRI
+from software_1.ImpExpMRI.Preprocessing.FilterSlices import SlicesMRI
+from software_1.ImpExpMRI.Preprocessing.getinfo import getInfoDicom
+from software_1.ImpExpMRI.Preprocessing import FormattingMRI
 from Preprocessing.BrainExtraction import bet
 from Preprocessing.MRIcoregistration import register_slices
 
@@ -222,6 +222,8 @@ class MainWindow(QMainWindow):
         else:
             super().mousePressEvent(event)
 
+        self.mouseMoveEvent(event)
+
     def mouseMoveEvent(self, event):
         if self.ImageMRI is not None:
             mousePos = self.mapFromGlobal(event.globalPos())
@@ -234,6 +236,11 @@ class MainWindow(QMainWindow):
 
                 self.showxcoor.setText("x =" + str(widthRescaling))
                 self.showycoor.setText("y =" + str(heightRescaling))
+
+                valueHS = self.horizontalSlider.value()
+                valueVS = self.verticalSlider.value()
+
+                self.intensity.setText("Intensity =" + str(self.MatrixMRI[valueHS][valueVS].pixel_array[heightRescaling][widthRescaling]))
 
             else:
                 anim = QPropertyAnimation(self.showycoor, b"opacity")

@@ -1,7 +1,7 @@
 class SlicesMRI():
     def __init__(self, imageMRI):
         self.NumberSlices = self.SlicerCounter(imageMRI)
-        self.OnlySlices = self.SepareteSlices(imageMRI)
+        # self.OnlySlices = self.SepareteSlices(imageMRI)
         self.FewSlices = self.SepareteFewSlices(imageMRI)
         self.Matrix = self.FormulantinMatrixMRI(imageMRI)
 

@@ -1,10 +1,11 @@
-from qtpy.QtWidgets import QDialog, QFileDialog, QVBoxLayout,QHeaderView, QCheckBox, QTableWidgetItem, QAbstractItemView, QProxyStyle, QStyle, QStyleOptionHeader, QWidget
+from qtpy.QtWidgets import QDialog, QFileDialog, QHeaderView, QCheckBox, QTableWidgetItem, QAbstractItemView
 from qtpy.uic import loadUi
 from qtpy.QtCore import Qt
 
 from pathlib import Path
 
 from Preprocessing import FormattingMRI
+from software_1.ImpExpMRI.Preprocessing.ClassificationType import classification
 
 import nibabel as nib
 import pydicom as dicom
@@ -18,14 +19,18 @@ class OpenMRI(QDialog):
         self.setWindowTitle("OpenMRI")
 
         # Estrutura inicial da tabela
-        self.tableFile.setColumnCount(4)
-        self.tableFile.setHorizontalHeaderLabels(['', "Arquivo", "Formato", "Fatia"])
+        self.tableFile.setColumnCount(8)
+        self.tableFile.setHorizontalHeaderLabels([''," Classification", "Fatia", "Echo Time", "Repetion Time", "Flip Angle", "Inversion Time", "b-value" ])
 
         #Define tamanho das colunas
         self.tableFile.setColumnWidth(0, 1)
-        self.tableFile.setColumnWidth(1, 435)
-        self.tableFile.setColumnWidth(2, 100)
-        self.tableFile.setColumnWidth(3, 55)
+        self.tableFile.setColumnWidth(1, 115)
+        self.tableFile.setColumnWidth(2, 85)
+        self.tableFile.setColumnWidth(3, 105)
+        self.tableFile.setColumnWidth(4, 85)
+        self.tableFile.setColumnWidth(5, 105)
+        self.tableFile.setColumnWidth(6, 85)
+        self.tableFile.setColumnWidth(7, 85)
 
         # Obtenha os cabeçalhos horizontal e vertical da tabela
         header_horizontal = self.tableFile.horizontalHeader()
@@ -83,6 +88,7 @@ class OpenMRI(QDialog):
 
     def OpenFolder(self):
         filedialog = QFileDialog()
+        filedialog.get
         path = filedialog.getExistingDirectory(self, 'Open Folder','C:/Users/marci/OneDrive/Desktop')
 
         if path:
@@ -129,12 +135,19 @@ class OpenMRI(QDialog):
 
         self.listItems(listItems)
 
+
+    def CheckItems(self):
+
+
     def listItems(self, items):
         List = []
 
         PatienteName = []
         Fatia = []
         Type = []
+
+        #Obtem classificacao de modalidade a ser calculada de mapa parametrico
+        classqMRI = classification(items)
 
         for i in range(len(items)):
             PatienteName.append(str(items[i].PatientName))
