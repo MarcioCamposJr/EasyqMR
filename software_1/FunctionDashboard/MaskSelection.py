@@ -2,7 +2,7 @@ from qtpy.QtWidgets import QDialog
 from qtpy.QtGui import QPixmap,QImage
 from qtpy.uic import loadUi
 from PIL import Image
-from Preprocessing.FormattingMRI import FormatMatrix
+from software_1.Preprocessing.FormattingMatrix import FormatMatrix
 
 class Mask(QDialog):
     def __init__(self,MatrixMRI, value):

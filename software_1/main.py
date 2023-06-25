@@ -5,9 +5,9 @@ from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
 from ImpExpMRI import OpenMRI
 
-from software_1.ImpExpMRI.Preprocessing.FilterSlices import SlicesMRI
-from software_1.ImpExpMRI.Preprocessing.getinfo import getInfoDicom
-from software_1.ImpExpMRI.Preprocessing import FormattingMRI
+from software_1.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
+from software_1.ImpExpMRI.ProcessingFile.getinfo import getInfoDicom
+from software_1.ImpExpMRI.ProcessingFile import FormattingMRI
 from Preprocessing.BrainExtraction import bet
 from Preprocessing.MRIcoregistration import register_slices
 

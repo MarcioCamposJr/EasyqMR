@@ -2,7 +2,7 @@ from PIL import Image
 from qtpy.QtGui import QImage,QPixmap
 import numpy as np
 import cv2
-from Preprocessing.FormattingMRI import FormatMatrix
+from software_1.Preprocessing.FormattingMatrix import FormatMatrix
 
 class SliderMRI():
 

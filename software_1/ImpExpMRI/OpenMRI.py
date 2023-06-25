@@ -3,9 +3,13 @@ from qtpy.uic import loadUi
 from qtpy.QtCore import Qt
 
 from pathlib import Path
+import time
 
-from Preprocessing import FormattingMRI
-from software_1.ImpExpMRI.Preprocessing.ClassificationType import classification
+from software_1.ImpExpMRI.ProcessingFile.FormattingMRI import FormattedMRI
+from software_1.ImpExpMRI.ProcessingFile.ClassificationType import classification
+from software_1.ImpExpMRI.ProcessingFile import OrderSlices
+
+from software_1.ImpExpMRI.UIProgressStepOpen import ProgressUI
 
 import nibabel as nib
 import pydicom as dicom
@@ -20,7 +24,7 @@ class OpenMRI(QDialog):
 
         # Estrutura inicial da tabela
         self.tableFile.setColumnCount(8)
-        self.tableFile.setHorizontalHeaderLabels([''," Classification", "Fatia", "Echo Time", "Repetion Time", "Flip Angle", "Inversion Time", "b-value" ])
+        self.tableFile.setHorizontalHeaderLabels([''," Classification", "Slice", "Echo Time", "Repetion Time", "Flip Angle", "Inversion Time", "b-value" ])
 
         #Define tamanho das colunas
         self.tableFile.setColumnWidth(0, 1)
@@ -79,8 +83,11 @@ class OpenMRI(QDialog):
 
         self.checkbox_horizontal.stateChanged.connect(self.selectAll)
 
+        self.Progress = ProgressUI()
+
         self.Path = None
-        self.MRI = []
+        self.MRI = None
+        self.MRIMatrix = []
         self.checkbox = []
         self.checkbox_item = []
 
@@ -88,12 +95,11 @@ class OpenMRI(QDialog):
 
     def OpenFolder(self):
         filedialog = QFileDialog()
-        filedialog.get
         path = filedialog.getExistingDirectory(self, 'Open Folder','C:/Users/marci/OneDrive/Desktop')
 
         if path:
             self.Path = Path(path)
-            self.ImpItens()
+            self.ImpAndFormat()
 
     def OpenFile(self):
         filedialog = QFileDialog()
@@ -102,11 +108,13 @@ class OpenMRI(QDialog):
         if self.pathFiles:
             self.Path = Path(self.pathFiles[0])
             print(self.pathFiles[0])
-            self.ImpItens()
-    def ImpItens(self):
-        #Add texto de diretorio para referenciar ultimo arquivo add
-        self.path.setText('   ' + str(self.Path))
+            self.ImpAndFormat()
 
+    def ImpAndFormat(self):
+        self.Progress = ProgressUI()
+        self.Progress.show()
+
+        self.Progress.updateProgress(10, 'Importing and formatting MRI files...')
         all_files = list(self.Path.glob("*"))
 
         listItems = []
@@ -115,56 +123,98 @@ class OpenMRI(QDialog):
             for pathFile in all_files:
                 if str(pathFile)[-4:] == ".nii":
                     file_nifti = nib.load(pathFile)
-                    listItems = FormattingMRI.FormattedMRI(file_nifti,'NIfTI')
+                    listItems = FormattedMRI(file_nifti,'NIfTI')
                     self.MRI = listItems
 
                 if str(pathFile)[-4:] == ".dcm":
                     file_dicom = dicom.read_file(pathFile)
-                    listItems.append(FormattingMRI.FormattedMRI(file_dicom, 'DICOM'))
-                    self.MRI.append(listItems)
+                    listItems.append(FormattedMRI(file_dicom, 'DICOM'))
+                    self.MRI = listItems
         else:
             if str(self.Path)[-4:] == ".nii":
                 file_nifti = nib.load(self.Path)
-                listItems = FormattingMRI.FormattedMRI(file_nifti, 'NIfTI')
+                listItems = FormattedMRI(file_nifti, 'NIfTI')
                 self.MRI = listItems
 
             if str(self.Path)[-4:] == ".dcm":
                 file_dicom = dicom.read_file(self.Path)
-                listItems.append(FormattingMRI.FormattedMRI(file_dicom, 'DICOM'))
+                listItems.append(FormattedMRI(file_dicom, 'DICOM'))
                 self.MRI.append(listItems)
+        self.CheckItems()
 
-        self.listItems(listItems)
+    def CheckItems(self): # todo rever a questao de adicionar mais itens, isto pois aqui esta usando sempre self.MRI
+        self.Progress.updateProgress(20, 'Checking similarity of MRI files...')
+        ReferName = self.MRI[0].PatientName
+        ReferResol = len(self.MRI[0].pixel_array)
 
+        i=1
+        while i < len(self.MRI):
+            if self.MRI[i].PatientName != ReferName or len(self.MRI[i].pixel_array) != ReferResol: #todo acho q tem q ver o y e o x da matriz
+                i = len(self.MRI) + 1
+                #TODO fazer janela de aviso para mencionar o fato de arquivo estar errado
+            else:
+                i = i + 1
+            if i == len(self.MRI):
+                self.SortItens()
 
-    def CheckItems(self):
+    def SortItens(self):
+        self.Progress.updateProgress(30, 'Arranging MRI slices...')
+        #Organizar fatias em matrix com conjunto de imagens correpondeste a seu parametro e verificacao se nao ha fatias repetidas por comparação de matriz
+        SortMatrixMRI = OrderSlices.CheckSlicesMRI(self.MRI)
 
+        self.Progress.updateProgress(60, 'Classifying MRI modality...')
+        #Classifica a modalidade de imagem de ressonancia
+        SortMatrixMRI = classification(SortMatrixMRI)
+        #Organiza as fatias de acordo com a ordem correta do parametro associado
+        SortMatrixMRI = OrderSlices.sortMRIParameters(SortMatrixMRI)
+
+        self.Progress.updateProgress(80, 'Checking symmetry of MRI slices...')
+        #Verifica simetria das fatias em relacao aos parametros
+        if OrderSlices.CheckSymmetryParameter(SortMatrixMRI):
+            self.MRIMatrix = SortMatrixMRI #todo Preciso rever aqui porque vou add mais de uma vez imagens nesse objeto
+            self.listItems(SortMatrixMRI)
 
     def listItems(self, items):
+        self.Progress.updateProgress(95, 'Adding the MRI Slices...')
         List = []
 
-        PatienteName = []
-        Fatia = []
-        Type = []
-
-        #Obtem classificacao de modalidade a ser calculada de mapa parametrico
-        classqMRI = classification(items)
+        Classification = []
+        Slice = []
+        EchoTime = []
+        RepetionTime = []
+        FlipAngle = []
+        InversionTime = []
+        bValue = []
 
         for i in range(len(items)):
-            PatienteName.append(str(items[i].PatientName))
-            Fatia.append(str(i))
-            Type.append(str(items[i].Type))
+            for j in range(len(items[0])):
+                Classification.append(str(items[i][j].TypeMRI))
+                Slice.append(str(items[i][j].SliceLocation))
+                EchoTime.append(str(items[i][j].EchoTime))
+                RepetionTime.append(str(items[i][j].RepetionTime))
+                FlipAngle.append(str(items[i][j].FlipAngle))
+                InversionTime.append(str(items[i][j].InversionTime))
+                bValue.append(str(items[i][j].DiffusionBValue))
 
-        List.append(PatienteName)
-        List.append(Type)
-        List.append(Fatia)
+        List.append(Classification)
+        List.append(Slice)
+        List.append(EchoTime)
+        List.append(RepetionTime)
+        List.append(FlipAngle)
+        List.append(InversionTime)
+        List.append(bValue)
 
         self.addItem(List)
 
     def addItem(self, item):
-        self.tableFile.setRowCount(len(item[0]))
+        #Add texto de diretorio para referenciar ultimo arquivo add
+        self.path.setText('   '+ + str(self.Path))
 
-        # self.checkbox = []
-        # self.checkbox_item = []
+        PatientName = items[0][0].PatientName
+        Resolution = str(len(items[0][0].pixel_array[:]) + ',' + len(items[0][0].pixel_array[0][:]))
+        LenItens = (len(items)*len(items[0]))
+
+        self.tableFile.setRowCount(len(item[0]))
 
         for i in range(len(item[0])):
             self.checkbox.append(QCheckBox())
@@ -177,6 +227,10 @@ class OpenMRI(QDialog):
             self.tableFile.setItem(i, 1, QTableWidgetItem(item[0][i]))
             self.tableFile.setItem(i, 2, QTableWidgetItem(item[1][i]))
             self.tableFile.setItem(i, 3, QTableWidgetItem(item[2][i]))
+            self.tableFile.setItem(i, 4, QTableWidgetItem(item[3][i]))
+            self.tableFile.setItem(i, 5, QTableWidgetItem(item[4][i]))
+            self.tableFile.setItem(i, 6, QTableWidgetItem(item[5][i]))
+            self.tableFile.setItem(i, 7, QTableWidgetItem(item[6][i]))
 
     def selectAll(self, state):
         if state == 2:  # 2 corresponde ao estado "marcado"
