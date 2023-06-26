@@ -9,32 +9,40 @@ from software_1.ImpExpMRI.ProcessingFile.FormattingMRI import FormattedMRI
 from software_1.ImpExpMRI.ProcessingFile.ClassificationType import classification
 from software_1.ImpExpMRI.ProcessingFile import OrderSlices
 
+from software_1.Alerts.Error import ErrorWarning
+
 from software_1.ImpExpMRI.UIProgressStepOpen import ProgressUI
 
 import nibabel as nib
 import pydicom as dicom
+
+import os
 class OpenMRI(QDialog):
 
     def __init__(self):
 
         super(OpenMRI,self).__init__()
-        loadUi("G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\OpenMRI.ui",self)
+
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "qt.ui/OpenMRI.ui")
+        loadUi(path,self)
 
         self.setWindowTitle("OpenMRI")
 
         # Estrutura inicial da tabela
         self.tableFile.setColumnCount(8)
         self.tableFile.setHorizontalHeaderLabels([''," Classification", "Slice", "Echo Time", "Repetion Time", "Flip Angle", "Inversion Time", "b-value" ])
+        self.tableFile.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
         #Define tamanho das colunas
         self.tableFile.setColumnWidth(0, 1)
-        self.tableFile.setColumnWidth(1, 115)
-        self.tableFile.setColumnWidth(2, 85)
-        self.tableFile.setColumnWidth(3, 105)
-        self.tableFile.setColumnWidth(4, 85)
-        self.tableFile.setColumnWidth(5, 105)
-        self.tableFile.setColumnWidth(6, 85)
-        self.tableFile.setColumnWidth(7, 85)
+        self.tableFile.setColumnWidth(1, 90)
+        self.tableFile.setColumnWidth(2, 70)
+        self.tableFile.setColumnWidth(3, 75)
+        self.tableFile.setColumnWidth(4, 100)
+        self.tableFile.setColumnWidth(5, 75)
+        self.tableFile.setColumnWidth(6, 100)
+        self.tableFile.setColumnWidth(7, 65)
 
         # Obtenha os cabeçalhos horizontal e vertical da tabela
         header_horizontal = self.tableFile.horizontalHeader()
@@ -65,6 +73,12 @@ class OpenMRI(QDialog):
         self.checkbox_horizontal.setStyleSheet("QCheckBox::indicator { width: 15px; height: 15px; }""QCheckBox { padding: 0px; margin: 3px;  margin-left:6px }")
         self.tableFile.setHorizontalHeaderItem(0, QTableWidgetItem())
         self.tableFile.setCellWidget(0, 0, self.checkbox_horizontal)
+
+        # Test de stylesheet
+        # pathStyleSheet = "C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/QSS/StyleSheetTableOpenMRI.qss"
+        # with open(pathStyleSheet, "r") as file:
+        #     qss_style = file.read()
+        # self.tableFile.setStyleSheet(qss_style)
 
         # Defina uma folha de estilo para os cabeçalhos
         header_style_horizonatal = "::section { background-color: #848484; color: black; font-weight: bold;font-size: 12px;text-align: center;}"
@@ -113,6 +127,7 @@ class OpenMRI(QDialog):
     def ImpAndFormat(self):
         self.Progress = ProgressUI()
         self.Progress.show()
+        self.test = ErrorWarning()
 
         self.Progress.updateProgress(10, 'Importing and formatting MRI files...')
         all_files = list(self.Path.glob("*"))
@@ -145,13 +160,19 @@ class OpenMRI(QDialog):
     def CheckItems(self): # todo rever a questao de adicionar mais itens, isto pois aqui esta usando sempre self.MRI
         self.Progress.updateProgress(20, 'Checking similarity of MRI files...')
         ReferName = self.MRI[0].PatientName
-        ReferResol = len(self.MRI[0].pixel_array)
+        ReferResol = (len(self.MRI[0].pixel_array), len(self.MRI[0].pixel_array[0]))
 
         i=1
         while i < len(self.MRI):
-            if self.MRI[i].PatientName != ReferName or len(self.MRI[i].pixel_array) != ReferResol: #todo acho q tem q ver o y e o x da matriz
+            if self.MRI[i].PatientName != ReferName:
                 i = len(self.MRI) + 1
-                #TODO fazer janela de aviso para mencionar o fato de arquivo estar errado
+                self.Progress.close()
+                self.Erro = ErrorWarning('The slices do not refer to the same patient.')
+
+            elif (len(self.MRI[i].pixel_array),len(self.MRI[i].pixel_array[0])) != ReferResol:
+                i = len(self.MRI) + 1
+                self.Progress.close()
+                self.Erro = ErrorWarning('The slices do not have the same spatial resolution.')
             else:
                 i = i + 1
             if i == len(self.MRI):
@@ -160,19 +181,26 @@ class OpenMRI(QDialog):
     def SortItens(self):
         self.Progress.updateProgress(30, 'Arranging MRI slices...')
         #Organizar fatias em matrix com conjunto de imagens correpondeste a seu parametro e verificacao se nao ha fatias repetidas por comparação de matriz
-        SortMatrixMRI = OrderSlices.CheckSlicesMRI(self.MRI)
-
-        self.Progress.updateProgress(60, 'Classifying MRI modality...')
-        #Classifica a modalidade de imagem de ressonancia
-        SortMatrixMRI = classification(SortMatrixMRI)
-        #Organiza as fatias de acordo com a ordem correta do parametro associado
-        SortMatrixMRI = OrderSlices.sortMRIParameters(SortMatrixMRI)
-
-        self.Progress.updateProgress(80, 'Checking symmetry of MRI slices...')
-        #Verifica simetria das fatias em relacao aos parametros
-        if OrderSlices.CheckSymmetryParameter(SortMatrixMRI):
-            self.MRIMatrix = SortMatrixMRI #todo Preciso rever aqui porque vou add mais de uma vez imagens nesse objeto
-            self.listItems(SortMatrixMRI)
+        SortMatrixMRI, check, index = OrderSlices.CheckSlicesMRI(self.MRI)
+        print(check)
+        if check:
+            errorLabel = 'Selected images have duplicate slice position' + str(SortMatrixMRI[index[0]][index[1]].SliceLocation)
+            self.Erro = ErrorWarning(errorLabel)
+            self.Progress.close()
+        else:
+            self.Progress.updateProgress(60, 'Classifying MRI modality...')
+            #Classifica a modalidade de imagem de ressonancia
+            SortMatrixMRI = classification(SortMatrixMRI)
+            #Organiza as fatias de acordo com a ordem correta do parametro associado
+            SortMatrixMRI = OrderSlices.sortMRIParameters(SortMatrixMRI)
+            self.Progress.updateProgress(80, 'Checking symmetry of MRI slices...')
+            #Verifica simetria das fatias em relacao aos parametros
+            if OrderSlices.CheckSymmetryParameter(SortMatrixMRI):
+                self.MRIMatrix = SortMatrixMRI #todo Preciso rever aqui porque vou add mais de uma vez imagens nesse objeto
+                self.listItems(SortMatrixMRI)
+            else:
+                self.error = ErrorWarning('The selected files do not have symmetry between slices and respective images.')
+                self.Progress.close()
 
     def listItems(self, items):
         self.Progress.updateProgress(95, 'Adding the MRI Slices...')
@@ -191,7 +219,7 @@ class OpenMRI(QDialog):
                 Classification.append(str(items[i][j].TypeMRI))
                 Slice.append(str(items[i][j].SliceLocation))
                 EchoTime.append(str(items[i][j].EchoTime))
-                RepetionTime.append(str(items[i][j].RepetionTime))
+                RepetionTime.append(str(items[i][j].RepetitionTime))
                 FlipAngle.append(str(items[i][j].FlipAngle))
                 InversionTime.append(str(items[i][j].InversionTime))
                 bValue.append(str(items[i][j].DiffusionBValue))
@@ -208,11 +236,11 @@ class OpenMRI(QDialog):
 
     def addItem(self, item):
         #Add texto de diretorio para referenciar ultimo arquivo add
-        self.path.setText('   '+ + str(self.Path))
+        self.path.setText('   ' + str(self.Path))
 
-        PatientName = items[0][0].PatientName
-        Resolution = str(len(items[0][0].pixel_array[:]) + ',' + len(items[0][0].pixel_array[0][:]))
-        LenItens = (len(items)*len(items[0]))
+        PatientName = self.MRIMatrix[0][0].PatientName
+        Resolution = str(len(self.MRIMatrix[0][0].pixel_array[:]) )+ ',' +str( len(self.MRIMatrix[0][0].pixel_array[0][:]))
+        LenItens = (len(self.MRIMatrix)*len(self.MRIMatrix[0]))
 
         self.tableFile.setRowCount(len(item[0]))
 
@@ -232,6 +260,8 @@ class OpenMRI(QDialog):
             self.tableFile.setItem(i, 6, QTableWidgetItem(item[5][i]))
             self.tableFile.setItem(i, 7, QTableWidgetItem(item[6][i]))
 
+        self.Progress.updateProgress(100, 'Done!')
+        self.Progress.close()
     def selectAll(self, state):
         if state == 2:  # 2 corresponde ao estado "marcado"
             for i in range(len(self.MRI)):
@@ -239,9 +269,6 @@ class OpenMRI(QDialog):
         else:
             for i in range(len(self.MRI)):
                 self.checkbox[i].setChecked(False)
-
-    # def deleteItens(self):
-
 
 
 

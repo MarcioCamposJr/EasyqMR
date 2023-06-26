@@ -3,12 +3,16 @@ from qtpy.QtGui import QPixmap,QImage
 from qtpy.uic import loadUi
 from PIL import Image
 from software_1.Preprocessing.FormattingMatrix import FormatMatrix
+import os
 
 class Mask(QDialog):
     def __init__(self,MatrixMRI, value):
 
         super(Mask, self).__init__()
-        loadUi("G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\MaskSelection.ui", self)
+
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "qt.ui/MaskSelection.ui")
+        loadUi(path, self)
 
         self.setWindowTitle("Mask Selection")
 

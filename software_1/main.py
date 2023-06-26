@@ -20,6 +20,7 @@ from qtpy.uic import loadUi
 from qtpy.QtGui import QImage, QPixmap
 from qtpy.QtCore import Qt, QPoint, QPropertyAnimation
 
+import os
 import sys
 import numpy as np
 
@@ -35,7 +36,9 @@ class MainWindow(QMainWindow):
 
         self.infoMapping = None
 
-        loadUi('G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\main.ui', self)
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "qt.ui/main.ui")
+        loadUi(path, self)
 
         self.setMouseTracking(True)
 

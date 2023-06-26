@@ -1,7 +1,7 @@
 from qtpy.QtWidgets import QDialog
 from qtpy.uic import loadUi
 from qtpy.QtGui import QMovie,QPixmap
-from qtpy.QtCore import Qt
+import os
 # from ProcessingFile.getinfo import getInfoDicom
 
 class PreviewGUI(QDialog):
@@ -9,7 +9,10 @@ class PreviewGUI(QDialog):
     def __init__(self, imageData):
 
         super(PreviewGUI,self).__init__()
-        loadUi("G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\qt.ui\preview.ui",self)
+
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "qt.ui/preview.ui")
+        loadUi(path,self)
 
         self.setWindowTitle("Preview")
 

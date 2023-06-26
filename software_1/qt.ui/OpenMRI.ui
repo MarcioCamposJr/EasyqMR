@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>679</width>
     <height>480</height>
    </rect>
   </property>
@@ -26,8 +26,20 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="path">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>10</horstretch>
@@ -50,7 +62,7 @@ background-color: rgb(140, 140, 140);</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="openFolder">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>2</horstretch>
@@ -72,7 +84,7 @@ background-color: rgb(140, 140, 140);</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="openFile">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>2</horstretch>
@@ -102,19 +114,12 @@ background-color: rgb(140, 140, 140);</string>
       <string notr="true">background-color: rgb(132, 132, 132)</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QListView" name="listView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>20</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(143, 143, 143)</string>
-        </property>
-       </widget>
-      </item>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <property name="sizePolicy">
@@ -124,41 +129,52 @@ background-color: rgb(140, 140, 140);</string>
          </sizepolicy>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="1" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item row="0" column="0" rowspan="2">
+          <widget class="QTableWidget" name="tableFile">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>20</horstretch>
+             <verstretch>10</verstretch>
+            </sizepolicy>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="0">
-          <widget class="QToolButton" name="toolButton">
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(153, 153, 153);</string>
+            <string notr="true"/>
            </property>
-           <property name="text">
-            <string>Delete</string>
-           </property>
+           <attribute name="horizontalHeaderCascadingSectionResizes">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
           </widget>
          </item>
-         <item row="0" column="1">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="2" column="0" colspan="2">
+          <widget class="QLabel" name="label">
+           <property name="styleSheet">
+            <string notr="true">color:white;</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
+           <property name="text">
+            <string>Suport File Type: NIfTI(.nii); DICOM(.dcm)</string>
            </property>
-          </spacer>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -186,7 +202,7 @@ background-color: rgb(140, 140, 140);</string>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="Close">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>3</horstretch>

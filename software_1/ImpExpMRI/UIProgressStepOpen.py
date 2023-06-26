@@ -1,11 +1,14 @@
 from qtpy.QtWidgets import QDialog, QApplication
 from qtpy.uic import loadUi
-from PyQt5.QtCore import QThread, pyqtSignal
+import os
 
 class ProgressUI(QDialog):
     def __init__(self):
         super(ProgressUI, self).__init__()
-        loadUi("C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/qt.ui/ProcessingStepOpen.ui", self)
+
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "qt.ui/ProcessingStepOpen.ui")
+        loadUi(path, self)
 
         self.setWindowTitle("Processing Files")
 
