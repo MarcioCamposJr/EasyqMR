@@ -395,7 +395,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/AnalyzeGraph.png</normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/AnalyzeGraph.png</iconset>
+              <normaloff>../Docs/icon/AnalyzeGraph.png</normaloff>../Docs/icon/AnalyzeGraph.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -437,7 +437,7 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/ErrorMap.png</normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/ErrorMap.png</iconset>
+              <normaloff>../Docs/icon/ErrorMap.png</normaloff>../Docs/icon/ErrorMap.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -569,7 +569,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/Coregister.png</normaloff>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/Coregister.png</iconset>
+           <normaloff>../Docs/icon/Coregister.png</normaloff>../Docs/icon/Coregister.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -725,7 +725,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/Docs/icon/Logo InBrain.png</pixmap>
+             <pixmap>../Docs/icon/Logo InBrain.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -759,19 +759,9 @@
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuOpen_MRI">
-     <property name="title">
-      <string>Open MRI</string>
-     </property>
-     <addaction name="OpenDicom"/>
-     <addaction name="OpenNIFTI"/>
-     <addaction name="actionAnalyze"/>
-    </widget>
-    <addaction name="menuOpen_MRI"/>
+    <addaction name="openMRI"/>
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
-    <addaction name="separator"/>
-    <addaction name="test"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -815,6 +805,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="openMRI">
+   <property name="text">
+    <string>Open MRI</string>
    </property>
   </action>
  </widget>

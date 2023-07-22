@@ -14,8 +14,12 @@ def FormattedMRI(MRI, image_type):
             lenMRI = dataPixel.shape[2]
             dataPixel = dataPixel[:1]
 
-        if dataPixel.shape[1] == dataPixel.shape[2]:
+        elif dataPixel.shape[1] == dataPixel.shape[2]:
             lenMRI = dataPixel.shape[0]
+            dataPixel = dataPixel[1:]
+
+        elif dataPixel.shape[0] == dataPixel.shape[2]:
+            lenMRI = dataPixel.shape[1]
             dataPixel = dataPixel[1:]
 
         for i in range(int(lenMRI)):
@@ -40,7 +44,10 @@ class MRIImage():
 
         self.EchoTime = MRI.EchoTime
         self.RepetitionTime = MRI.RepetitionTime
-        self.InversionTime = None
+        if hasattr(MRI, 'InversionTime'):
+            self.InversionTime = MRI.InversionTime
+        else:
+            self.InversionTime = None
         self.FlipAngle = MRI.FlipAngle
         self.DiffusionBValue = MRI.DiffusionBValue
 
@@ -50,7 +57,7 @@ class MRIImage():
         self.SeriesDescription = MRI.SeriesDescription
         self.PixelSpacing = MRI.PixelSpacing
 
-        self.TypeMRI = None
+        self.AcquisitionDate = MRI.AcquisitionDate[6:8] + '.' + MRI.AcquisitionDate[4:6] + '.' + MRI.AcquisitionDate[:4]
 
     def FormatNIfTI(self, MRI, data):
 
@@ -69,4 +76,4 @@ class MRIImage():
         self.SeriesDescription = None
         self.PixelSpacing = None
 
-        self.TypeMRI = None
+        self.AcquisitionDate = None

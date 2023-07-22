@@ -1,6 +1,9 @@
 from qtpy.QtWidgets import QDialog
 from qtpy.uic import loadUi
 from qtpy.QtGui import QMovie,QPixmap
+
+from software_1.ImpExpMRI.ProcessingFile.MRIPreviewSample import create_gif
+
 import os
 # from ProcessingFile.getinfo import getInfoDicom
 
@@ -30,19 +33,16 @@ class PreviewGUI(QDialog):
 
     def SamplingPreviewMRI(self):
 
-        from ProcessingFile.OrderSlices import sort_slices
+        fewSlices = []
 
-        self.OrderImageMRI = sort_slices(self.imageData)
+        for i in range(12):
+            fewSlices.append(self.imageData[i][0])
 
-        from ProcessingFile.FilterSlices import SlicesMRI
+        create_gif(fewSlices, 13)
 
-        slices = SlicesMRI(self.OrderImageMRI)
-        self.separeMRI = slices.FewSlices
+        path = os.path.dirname(os.path.abspath('None'))
+        path = os.path.join(path, "Docs\Animation\preview.gif")
 
-        from ProcessingFile.MRIPreviewSample import create_gif
-
-
-        create_gif(self.separeMRI, 13)
-        gif = QMovie("G:\Meu Drive\Projeto InBrain 2022\EasyqMRI\software_1\Docs\Animation\preview.gif")
+        gif = QMovie(path)
         self.prev.setMovie(gif)
         gif.start()

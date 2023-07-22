@@ -11,8 +11,6 @@ class ErrorWarning(QDialog):
         path = os.path.join(path, "qt.ui/ErrorAlert.ui")
         loadUi(path, self)
 
-        self.oi = 123
-
         self.setWindowTitle("Error Warning")
 
         self.error.setText(str(labelError))

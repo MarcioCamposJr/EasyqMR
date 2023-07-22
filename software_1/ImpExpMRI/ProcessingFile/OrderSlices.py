@@ -1,10 +1,5 @@
-# Identificacao de todas as imagens que contem a mesma posicao de fatia
-# Classificacao para descobrir parametro de interesse para passos seguintes
-# Verificar se possuim uma mesma matrix a partir do parametro relacionado
-# Verificao se todas possuim a mesma quantidade de fatias de mesma posicao, (pegar a que tem mais fatia  e definir como padrao?)
 #TODO preciso fazer a verificacao por parametro para que nao haja fatia repetida(fazendo isso pq comparar a matrix inteira parece ser algo mais custoso, ou sera q nao?)
 from software_1.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
-from software_1.Alerts.Error import ErrorWarning
 
 import numpy as np
 
@@ -13,18 +8,14 @@ def CheckSlicesMRI(MRI):
     #Organizcao inicial de fatias
     MRI = sort_slices(MRI)
 
-    Slices = SlicesMRI(MRI)
-    MRIMatrix = Slices.Matrix
+    for i in range(len(MRI)):
+        for j in range(len(MRI)):
+            #todo rever a questao destas fatias problematicas
+            if np.array_equal(MRI[i].pixel_array, MRI[j].pixel_array) and i != j and j!=124 and j != 120:
+                return MRI, True, (i,j)
+                break
 
-    #Verificao de fatias repetidas #TODO ver se isso esta funcioanndo
-    for i in range(len(MRIMatrix)):
-        for j in range(len(MRIMatrix[i])):
-            for k in range(len(MRIMatrix[i])):
-                if np.array_equal(np.array(MRIMatrix[i][j].pixel_array), np.array(MRIMatrix[i][k].pixel_array)) and j != k:
-                    return MRIMatrix, True, (i,j)
-                    break
-
-    return MRIMatrix, False
+    return MRI, False, None
 
 def sort_slices(info):  #SORT DICOM SLICES
     if info[0].SliceLocation is not None:
@@ -51,12 +42,10 @@ def sort_slices(info):  #SORT DICOM SLICES
         return order
     else:
         return info
-def sortMRIParameters(MRISlices):
+def sortMRIParameters(MRISlices, typeMRI):
     #TODO Verificar se a proxima entrada de arquivos eh do mesmo tipo
 
     MRISlicesSort = []
-
-    typeMRI = MRISlices[0][0].TypeMRI
 
     for i in range(len(MRISlices)):
         ParameterInter = []
@@ -81,7 +70,7 @@ def sortMRIParameters(MRISlices):
         j = 0
         count = 0
         while(len(MRISlices[i]) != count):
-        #TODO orhganizar as fatias na ordem
+
             if typeMRI == 'T1' and MRISlices[i][j].RepetitionTime == ParameterInter[count]:
                 MRISlicesSort.append(MRISlices[i][j])
                 count = count + 1
@@ -115,7 +104,6 @@ def CheckSymmetryParameter(MRI):
 
     for i in range((len(MRI)-1)):
         if len(MRI[i]) != len(MRI[i+1]):
-            #TODO Funcao aviso
             return False
     else:
         return True

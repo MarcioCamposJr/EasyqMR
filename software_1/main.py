@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 
-from ImpExpMRI.Dicom import OpenDicom
-from ImpExpMRI.NIfTI import OpenNII
 from ImpExpMRI import Preview
 from ImpExpMRI import OpenMRI
 
@@ -10,6 +8,8 @@ from software_1.ImpExpMRI.ProcessingFile.getinfo import getInfoDicom
 from software_1.ImpExpMRI.ProcessingFile import FormattingMRI
 from Preprocessing.BrainExtraction import bet
 from Preprocessing.MRIcoregistration import register_slices
+
+from software_1.Alerts.Error.ErrorWarning import ErrorWarning
 
 from FunctionDashboard.SlidersChangeImage import SliderMRI
 from FunctionDashboard.ParameterGraphAnalysis import graphParameter
@@ -31,10 +31,12 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
 
         self.MatrixMRI = None
-        self.ImageMRI = None
+        self.ImageMRI = [0,1,3]
         self.slider = None
 
         self.infoMapping = None
+
+        self.modalityMRI = None
 
         path = os.path.dirname(os.path.abspath('None'))
         path = os.path.join(path, "qt.ui/main.ui")
@@ -42,9 +44,7 @@ class MainWindow(QMainWindow):
 
         self.setMouseTracking(True)
 
-        self.OpenDicom.triggered.connect(self.OpenFolderDicom)
-        self.OpenNIFTI.triggered.connect(self.OpenFolderNii)
-        self.test.triggered.connect(self.OpenMRI)
+        self.openMRI.triggered.connect(self.OpenMRI)
 
         self.horizontalSlider.valueChanged.connect(self.ChangeSlider)
         self.verticalSlider.valueChanged.connect(self.ChangeSlider)
@@ -62,57 +62,25 @@ class MainWindow(QMainWindow):
         self.AnalyzeGraph.released.connect(self.realeaseSetMap)
 
     def OpenMRI(self):
-        self.Open = OpenMRI.OpenMRI()
-    def OpenFolderDicom(self):
+        self.OpenMri = OpenMRI.OpenMRI()
+        self.OpenMri.open.clicked.connect(self.Preview)
 
-        importData = OpenDicom.OpenMRI()
+    def Preview(self):
+        self.MatrixMRI = self.OpenMri.MRIMatrixDone
+        self.modalityMRI = self.OpenMri.modality
 
-        if importData.path:
-            image_type = 'DICOM'
-            imageData = importData.imageMRI
-            self.Preview(imageData, image_type)
+        if len(self.MatrixMRI[0])>1:
+            self.OpenMri.close()
+            self.preview = Preview.PreviewGUI(self.MatrixMRI)
+            self.preview.Open.clicked.connect(self.InitImage)
+        else:
+            self.error = ErrorWarning('The selected images have no variation of the parameter of interest.')
 
-    def OpenFolderNii(self):
 
-        importData = OpenNII.OpenNII()
-
-        if importData.path:
-            image_type = 'NIfTI'
-            imageData = importData.imageMRI
-            self.Preview(imageData, image_type)
-
-    def Preview(self, imageData, image_type):
-        MRI = FormattingMRI.FormattedMRI(imageData, image_type)
-        self.preview = Preview.PreviewGUI(MRI)
-        self.preview.Open.clicked.connect(self.CheckImage)
-
-    def CheckImage(self):
-
-        self.ImageMRI = self.preview.OrderImageMRI
-        self.SlicesMRI = SlicesMRI(self.ImageMRI)
-        self.MatrixMRI = self.SlicesMRI.Matrix
-        self.OnlySlices = self.SlicesMRI.OnlySlices
-
-        # import nibabel as nib
-        #
-        # slices = []
-        #
-        # for i in range(len(self.OnlySlices)):
-        #
-        #     slices.append(np.array(self.OnlySlices[i].pixel_array))
-        #
-        #
-        # imagem_nifti = nib.Nifti1Image(np.array(slices), np.eye(4))
-        # nib.save(imagem_nifti, 'C:/Users/marci/OneDrive/Desktop/MRI/NIFTI/testConvert/test2')
-
-        # if self.SlicesMRI.NumberSlices != 0:
-        #     self.condParam = True
-        # else:
-        #     self.condParam = False
-
+    def InitImage(self):
         self.preview.close()
 
-        self.setinfo()
+        # self.setinfo()
 
         self.horizontalSlider.setValue(0)
         self.verticalSlider.setValue(0)
@@ -129,7 +97,7 @@ class MainWindow(QMainWindow):
 
     def ChangeSlider(self):
 
-        if self.ImageMRI is not None:
+        if self.MatrixMRI is not None:
 
             if len(self.ImageMRI) != len(self.MatrixMRI[:]):
 

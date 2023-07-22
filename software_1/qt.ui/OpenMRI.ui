@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>679</width>
+    <width>800</width>
     <height>480</height>
    </rect>
   </property>
@@ -124,9 +124,12 @@ background-color: rgb(140, 140, 140);</string>
        <widget class="QWidget" name="widget_3" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>4</horstretch>
+          <horstretch>20</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <property name="leftMargin">
@@ -141,6 +144,222 @@ background-color: rgb(140, 140, 140);</string>
          <property name="bottomMargin">
           <number>4</number>
          </property>
+         <item row="0" column="1" rowspan="2">
+          <widget class="QWidget" name="data" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>6</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QWidget {
+    border: 2px solid #4a4a4a; /* Cor da borda */
+    border-radius: 5px; /* Curvatura da borda */
+    padding: 10px; /* Espaçamento interno para o conteúdo do QWidget */
+ /* Cor do texto dentro do QWidget */
+}</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 4px 2px 0px 1px; color: balck</string>
+              </property>
+              <property name="text">
+               <string>Patient Name:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="patientName">
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 0px 0px 2px 1px;</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 4px 2px 0px 1px; color: balck</string>
+              </property>
+              <property name="text">
+               <string>Exam date:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="examDate">
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 0px 0px 2px 1px;</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>2</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 4px 2px 0px 1px; color: balck</string>
+              </property>
+              <property name="text">
+               <string>Dimension of Slices:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="sizeSlices">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>3</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 0px 0px 2px 1px;</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: None;
+padding: 4px 2px 0px 1px; color: balck</string>
+              </property>
+              <property name="text">
+               <string>Classification:</string>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="setLabelClassification">
+              <property name="styleSheet">
+               <string notr="true">QComboBox {
+	border: 1px solid #333333;
+	border-radius: 3px;
+	background: rgb(95, 95, 95);
+	padding: 1px 23px 1px 3px;
+	min-width: 6em;
+	color: #ffffff;
+}
+QComboBox::drop-down {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 20px;
+	border: None;
+}
+QComboBox::down-arrow {
+     image: url(:/software_1/Docs/icon/arrowDown.png);
+}
+ 
+QComboBox QAbstractView{
+	background-color: #4f4f4f;
+	color: #999999;
+ 
+	selection-background-color: #999999;
+	selection-color: #4f4f4f;
+}</string>
+              </property>
+              <property name="currentIndex">
+               <number>-1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>T1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>T1p</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>T2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>T2*</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>IVIM</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>ADC</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>150</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
          <item row="0" column="0" rowspan="2">
           <widget class="QTableWidget" name="tableFile">
            <property name="sizePolicy">
@@ -163,18 +382,60 @@ background-color: rgb(140, 140, 140);</string>
            </attribute>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QLabel" name="label">
-           <property name="styleSheet">
-            <string notr="true">color:white;</string>
-           </property>
-           <property name="text">
-            <string>Suport File Type: NIfTI(.nii); DICOM(.dcm)</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
+         <item row="3" column="0" rowspan="2" colspan="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: #333333; </string>
+             </property>
+             <property name="text">
+              <string>Total Slices:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="totalSlices">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>3</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: #333333; </string>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>15</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:white;</string>
+             </property>
+             <property name="text">
+              <string>Suport File Type: NIfTI(.nii); DICOM(.dcm)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -234,7 +495,7 @@ background-color: rgb(140, 140, 140);</string>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="open">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>3</horstretch>

@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from Preprocessing.FormattingMRI import FormatParamMap
 
+#todo selecao de roi, full volume, free hands,selecao retangular e volume.
 def mappingT2(image):
 
     echo_times = [float(dcm.EchoTime) for dcm in image]
