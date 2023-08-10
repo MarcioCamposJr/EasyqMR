@@ -3,7 +3,6 @@ from qtpy.uic import loadUi
 from qtpy.QtCore import Qt
 
 from pathlib import Path
-import time
 from copy import deepcopy, copy
 
 from software_1.ImpExpMRI.ProcessingFile.FormattingMRI import FormattedMRI
@@ -13,34 +12,32 @@ from software_1.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
 
 from software_1.Alerts.Error.ErrorWarning import ErrorWarning
 
-from software_1.ImpExpMRI.UIProgressStepOpen import ProgressUI
+from software_1.Alerts.Processing.UIProgressStepOpen import ProgressUI
 
 import nibabel as nib
 import pydicom as dicom
 
-from numpy import array_equal
-
 import os
 
+#todo rever todo codigo para abertura de uma imagem sem variacao de parametro
 class OpenMRI(QDialog):
 
-    def __init__(self):
+    def __init__(self, parent):
 
-        super(OpenMRI,self).__init__()
+        super(OpenMRI,self).__init__(parent)
 
         path = os.path.dirname(os.path.abspath('None'))
         path = os.path.join(path, "qt.ui/OpenMRI.ui")
         loadUi(path,self)
 
         self.setWindowTitle("OpenMRI")
+        self.setFixedSize(self.size())
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         # Estrutura inicial da tabela
         self.tableFile.setColumnCount(7)
-        #todo trocar slice por slice position
         self.tableFile.setHorizontalHeaderLabels(['', "Slice Position", "Echo Time", "Repetition Time", "Flip Angle", "Inversion Time", "b-value" ])
         self.tableFile.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        #todo mostrar sempre tempo de repeticao, tempo de eco, angulo de flip
-        #todo o inversion time nem smepre eh necessario para t1, apenas se existir
         #Define tamanho das colunas
         self.tableFile.setColumnWidth(0, 1)
         self.tableFile.setColumnWidth(1, 92)
@@ -48,7 +45,7 @@ class OpenMRI(QDialog):
         self.tableFile.setColumnWidth(3, 110)
         self.tableFile.setColumnWidth(4, 75)
         self.tableFile.setColumnWidth(5, 105)
-        self.tableFile.setColumnWidth(6, 65)
+        self.tableFile.setColumnWidth(6, 62)
 
         # Obtenha os cabeçalhos horizontal e vertical da tabela
         header_horizontal = self.tableFile.horizontalHeader()
@@ -105,7 +102,6 @@ class OpenMRI(QDialog):
 
         self.setLabelClassification.currentTextChanged.connect(self.updateModality)
 
-        self.Progress = ProgressUI()
 
         self.Path = None
         self.modality = None
@@ -115,6 +111,7 @@ class OpenMRI(QDialog):
         self.MRIMatrix = []
 
         self.totalMRI = None
+        self.totalMRIDone = None
 
         self.checkbox = []
         self.checkbox_item = []
@@ -139,7 +136,7 @@ class OpenMRI(QDialog):
             self.ImpAndFormat()
 
     def ImpAndFormat(self):
-        self.Progress = ProgressUI()
+        self.Progress = ProgressUI(Title='Processing File')
         self.Progress.show()
 
         self.Progress.updateProgress(10, 'Importing and formatting MRI files...')
@@ -259,21 +256,25 @@ class OpenMRI(QDialog):
         PatientName = str(self.MRIMatrix[0][0].PatientName)
         Resolution = str(len(self.MRIMatrix[0][0].pixel_array[:]) )+ ',' +str( len(self.MRIMatrix[0][0].pixel_array[0][:]))
         self.totalMRI = len(self.MRIMatrix)*len(self.MRIMatrix[0])
-        LenItens = str(self.totalMRI) + ' de '  + str(self.totalMRI)
+        self.totalMRIDone = copy(self.totalMRI)
+        LenItens = str(self.totalMRIDone) + ' de '  + str(self.totalMRI)
         ExamDate = str(self.MRIMatrix[0][0].AcquisitionDate)
 
         self.patientName.setText(PatientName)
         self.examDate.setText(ExamDate)
         self.totalSlices.setText(LenItens)
         self.sizeSlices.setText(Resolution)
-        self.setLabelClassification.setCurrentText(self.modality)
+
+        index = self.setLabelClassification.findText(self.modality)
+        self.setLabelClassification.setItemText(index, self.modality + ' (pre fixed)')
+        self.setLabelClassification.setCurrentText(self.modality + ' (pre fixed)')
 
         self.tableFile.setRowCount(len(item[0]))
 
         for i in range(len(item[0])):
             self.checkbox.append(QCheckBox())
             self.checkbox[i].setChecked(True)
-            self.checkbox[i].stateChanged.connect(lambda state, row=i: self.updateByCB(state, row))
+            self.checkbox[i].stateChanged.connect(lambda state, row = i: self.updateByCB(state, row))
             self.checkbox[i].setStyleSheet("QCheckBox::indicator { width: 15px; height: 15px; }""QCheckBox { padding: 0px; margin: 1px;  margin-left:6px }")
             self.checkbox_item.append(QTableWidgetItem())
             self.checkbox_item[i].setFlags(self.checkbox_item[i].flags() | 0x0020)  # Definindo a flag como um item selecionável
@@ -305,39 +306,37 @@ class OpenMRI(QDialog):
     def updateModality(self, label):
         if len(self.MRIMatrix) != 0:
             self.modality = label
+
     def updateByCB(self, state, row):
 
         lenMRI = len(self.MRIMatrix)
         lenSlice = len(self.MRIMatrix[0][:])
 
-        i = int(row/lenSlice)
-        j  = (row)-(i*lenSlice)
+        i = int(row / lenSlice)
+        j = (row) - (i * lenSlice)
 
         if state == 0:
 
-            for obj in self.MRIMatrixDone[i]:
-                if array_equal(obj.pixel_array,self.MRIMatrix[i][j].pixel_array):
-                    self.MRIMatrixDone[i].remove(obj)
+            if len(self.MRIMatrixDone[i]) == 0:
+                self.MRIMatrixDone[i].pixel_array = 0
 
-                    if len(self.MRIMatrixDone[i]) == 0:
-                        del self.MRIMatrixDone[i]
+            else: self.MRIMatrixDone[i][j].pixel_array = 0
 
-            totalMRI = 0
-            totalMRI = sum(len(row) for row in self.MRIMatrixDone)
+            self.totalMRIDone = self.totalMRIDone - 1
 
-            LenItens = str(totalMRI) + ' de ' + str(self.totalMRI)
+            LenItens = str(self.totalMRIDone) + ' de ' + str(self.totalMRI)
 
         if state == 2:
 
-            self.MRIMatrixDone[i].insert(j, deepcopy(self.MRIMatrix[i][j]))
+            if len(self.MRIMatrixDone[i]) == 0:
+                self.MRIMatrixDone[i].pixel_array = deepcopy(self.MRIMatrix[i].pixel_array)
 
-            temp = OrderSlices.sortMRIParameters(self.MRIMatrixDone[:i+1], typeMRI=self.modality)[i]
+            else: self.MRIMatrixDone[i][j].pixel_array = deepcopy(self.MRIMatrix[i][j].pixel_array)
 
-            self.MRIMatrixDone[i] = temp
+            self.totalMRIDone = self.totalMRIDone + 1
 
-            totalMRI = 0
-            totalMRI = sum(len(row) for row in self.MRIMatrixDone)
-
-            LenItens = str(totalMRI) + ' de ' + str(self.totalMRI)
+            LenItens = str(self.totalMRIDone) + ' de ' + str(self.totalMRI)
 
         self.totalSlices.setText(LenItens)
+
+

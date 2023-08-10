@@ -1,8 +1,10 @@
+from software_1.Preprocessing.FormattingMatrix import FormatTo16bits
+import numpy as np
+
 def FormattedMRI(MRI, image_type):
 
 
     if image_type == 'DICOM':
-        # for i in range(len(MRI)): #Modelo antigo
         FormatMRI = MRIImage(MRI, image_type)
         return FormatMRI
 
@@ -39,7 +41,7 @@ class MRIImage():
 
     def FormatDicom(self,MRI):
         # if hasattr(MRI, 'InversionTime'): ##Todo condicao para verificar se variavel existe
-        self.pixel_array = MRI.pixel_array
+        self.pixel_array = FormatTo16bits(MRI.pixel_array)
         self.SliceLocation = MRI.SliceLocation
 
         self.EchoTime = MRI.EchoTime
@@ -53,15 +55,24 @@ class MRIImage():
 
         self.PatientName = MRI.PatientName
         self.BodyPartExamined = MRI.BodyPartExamined
-        self.MRAcquisitionType = MRI.MRAcquisitionType
+        self.MRAcquisitionType = MRI.MRAcquisitionType + ' ' + MRI.ScanningSequence
         self.SeriesDescription = MRI.SeriesDescription
         self.PixelSpacing = MRI.PixelSpacing
 
         self.AcquisitionDate = MRI.AcquisitionDate[6:8] + '.' + MRI.AcquisitionDate[4:6] + '.' + MRI.AcquisitionDate[:4]
 
+        n = len(self.pixel_array)
+        self.fullMask = np.ones((n, n), dtype=bool)
+        self.mask = None
+
+        self.fullROI = True
+        self.elliROI = False
+        self.rectROI = False
+        self.freeHandsROI = False
+
     def FormatNIfTI(self, MRI, data):
 
-        self.pixel_array = data
+        self.pixel_array = FormatTo16bits(data)
         self.SliceLocation = None
 
         self.RepetitionTime = MRI.header.get('repetition_time')
@@ -77,3 +88,12 @@ class MRIImage():
         self.PixelSpacing = None
 
         self.AcquisitionDate = None
+
+        n = len(self.pixel_array)
+        self.fullMask = np.ones((n, n), dtype=bool)
+        self.mask = None
+
+        self.fullROI = True
+        self.elliROI = False
+        self.rectROI = False
+        self.freeHandsROI = False

@@ -1,15 +1,5 @@
 def classification(image): #MRI METHOD CLASSIFICATION
 
-    # if variation_detection(image) == False:
-    #
-    #     #MRI CLASSIFICATION IN RELAXOMETRY WEIGHTED
-    #     if image[0][0].EchoTime > 50:
-    #         clss = 'Ponderada em T2'
-    #     else:
-    #         clss = 'Ponderada em T1'
-    #
-    # else:
-
     if image[0][0].RepetitionTime<=1000 and image[0][0].EchoTime >= 60:
         clss = 'T2'
 

@@ -26,15 +26,24 @@ def FormatTo16bits(matrix):
 
     return matrix
 
+def FormatTo8bits(matrix):
+
+    matrix = (matrix - np.min(matrix)) / ((np.max(matrix) - np.min(matrix)))
+
+    matrix = (matrix * ((2 ** 8)-1))
+
+    matrix = np.round(matrix).astype(np.uint16)
+
+    return matrix
 def FormatMatrix(matrix):
 
     # matrix = np.round(matrix)
 
     matrix = np.clip(matrix, 0, ((2 ** 16)-1))
 
-    matrix = (matrix - np.min(matrix)) / (np.max(matrix) - np.min(matrix))
-
-    matrix = (matrix * ((2 ** 16)-1))
+    # matrix = (matrix - np.min(matrix)) / (np.max(matrix) - np.min(matrix))
+    #
+    # matrix = (matrix * ((2 ** 16)-1))
 
     matrix = np.round(matrix).astype(np.uint16)
 
