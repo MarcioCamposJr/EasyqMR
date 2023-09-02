@@ -14,8 +14,7 @@ class BET():
         self.Progress.show()
 
         self.firstBet = self.betMO(mri)
-
-        self.Progress.updateProgress(100, 'Finishing Extracting brain... ' + str(100) + '%')
+        self.Progress.updateProgress(100, 'Finishing Extracting brain... 100%')
         self.betDone = self.betGTO(self.firstBet)
 
         self.Progress.close()
@@ -23,11 +22,9 @@ class BET():
         self.MRI = self.betDone
 
     def betGTO(self,mri):
-
-
         for i in range(len(mri)):
 
-            image = mri[i][len(mri[0])-1].pixel_array
+            image = mri[i][-1].pixel_array
             thresh_val, img_bin = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
             img_bin = cv2.convertScaleAbs(img_bin)
@@ -59,7 +56,7 @@ class BET():
         for i in range(len(mri)):
             self.Progress.updateProgress(step * i, 'Extracting brain... ' + str(step*i) + '%')
             for j in range(len(mri[i])):
-                b0_mask = median_otsu(mri[i][j].pixel_array,numpass=15, median_radius=5)[0]
+                b0_mask = median_otsu(mri[i][j].pixel_array,numpass=3, median_radius=3)[0]
 
                 mri[i][j].pixel_array = b0_mask
 

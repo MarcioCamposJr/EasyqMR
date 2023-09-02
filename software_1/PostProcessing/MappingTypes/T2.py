@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import curve_fit
-from sklearn.metrics import r2_score
 import time
+import copy
 
 def mappingT2(image):
     """
@@ -15,104 +15,58 @@ def mappingT2(image):
     """
     start_time = time.time()
 
-    echo_times = [float(dcm.EchoTime) for dcm in image]
-    data = [dcm.pixel_array for dcm in image]
-    data = np.array(data)
-
-    x = np.array(echo_times)
+    echo_times = np.array([float(dcm.EchoTime) for dcm in image])
+    data = np.array([dcm.pixel_array for dcm in image])
 
     t2_map = np.zeros(data.shape[1:])
     consMag = np.zeros(data.shape[1:])
-    offset = np.zeros(data.shape[1:])
     errorMap = np.zeros(data.shape[1:])
-
     mean = meanThreshold(data, 5000)
 
-    initial_guess = [mean, 0]
-    fit = []
+    for i in range(data.shape[1]):
+        print(i)
+        for j in range(data.shape[2]):
+            if image[0].fullMask[i][j] and data[0, i, j] > 5000:
+                try:
+                    y = np.log(data[:, i, j] + 1)
+                    fit = np.polyfit(echo_times, y, 1)
+                    initial_guess = [np.exp(fit[1]), (-1/fit[0])]
 
-    for j in range(data.shape[1]):
-        for i in range(data.shape[2]):
-            print(i, j)
-            if image[0].fullMask[i][j]:
-                if data[0, i, j] > 5000:
-                #     try:
-                #         params, _ = curve_fit(exponential_func, x, data[:, i, j], p0=initial_guess)
-                #
-                #         a, b = params
-                #         initial_guess = [a, b]
-                #
-                #     except RuntimeError as e:
-                #
-                #         try:
-                #
-                #             initial_guess = [mean, 0]
-                #
-                #             params, _ = curve_fit(exponential_func, x, data[:, i, j], p0=initial_guess)
-                #
-                #             a, b = params
-                #             initial_guess = [a, b]
-                #
-                #         except RuntimeError as e:
-                #
-                #             a, b = 0, 0
-                #
-                #             initial_guess = [mean, 0]
-                #
-                #     if initial_guess == [0, 0]:
-                #
-                #         initial_guess = [mean, 0]
-                #
-                #         params, _ = curve_fit(exponential_func, x, data[:, i, j], p0=initial_guess)
-                #
-                #         a, b = params
-                #         initial_guess = [a, b]
-                #
-                #
-                # else:
-                #     a, b = 0, 0
-                #
-                # if b > 0:
-                #     t2_map[i][j] = 1 / b
-                # else:
-                #     t2_map[i][j] = 0
-                #
-                # consMag[i][j] = a
-                # offset[i][j] = c
+                except RuntimeError as e:
+                    initial_guess = [mean, 0]
 
-                    try:
-                        y = np.log(data[:, i, j] + 1)
-                        x = np.array(echo_times)
-                        fit = np.polyfit(x, y, 1)
+                try:
+                    params, _ = curve_fit(exponential_func, echo_times, data[:, i, j], p0=initial_guess)
 
-                    except RuntimeError as e:
+                    a, b = copy.copy(params)
+                    a, b = (0, 0) if b > 1000 or b < 0 else (a, b)
 
-                        t2_map[i, j] = 0
-                        consMag[i, j] = 0
+                except RuntimeError as e:
+                    a, b = 0, 0
 
-                else:
+            else:
+                a, b = 0, 0
 
-                    fit = [0, 0]
-                    consMag[i, j] = 0
 
-                if fit[0] < 0:
-                    t2_map[i, j] = -1 / fit[0]
+            consMag[i, j] = a
+            t2_map[i, j] = b
 
-                else:
-                    t2_map[i, j] = 0
+            if np.isnan(data[:, i, j]).any() or data[0, i, j] < 5000:
+                errorMap[i, j] = 0
+            else:
+                y_pred = exponential_func(echo_times, a, b)
+                residuals = y_pred - data[:, i, j]
+                ss_residuals = np.sum(residuals ** 2)
+                ss_total = np.sum((data[:, i, j] - np.mean(data[:, i, j])) ** 2)
+                errorMap[i, j] = max(0, 1 - (ss_total / ss_residuals))
 
-                consMag[i, j] = np.exp(fit[1])
-
-            # y_pred = exponential_func(x, a, b, c)
-            # errorMap[i][j] = r2_score(data[:, i, j], y_pred)
     end_time = time.time()
 
     # Calcula a duração da execução
     duration = end_time - start_time
     print(f'Duração da execução: {duration:.6f} segundos')
 
-    return [t2_map, consMag ]
-# return [t2_map, consMag]
+    return [t2_map, consMag, errorMap, image[0].SliceLocation, data, echo_times]
 
 def exponential_func(x, a, b):
     """

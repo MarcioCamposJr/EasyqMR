@@ -46,7 +46,7 @@
         <widget class="QWidget" name="gridWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>18</horstretch>
+           <horstretch>16</horstretch>
            <verstretch>39</verstretch>
           </sizepolicy>
          </property>
@@ -695,7 +695,7 @@ QPushButton:disabled {
         <widget class="QWidget" name="gridWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>39</horstretch>
+           <horstretch>37</horstretch>
            <verstretch>39</verstretch>
           </sizepolicy>
          </property>
@@ -715,43 +715,11 @@ QPushButton:disabled {
           <property name="bottomMargin">
            <number>5</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="mainImage">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>38</horstretch>
-              <verstretch>38</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">padding: 0 20 0 0;</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="margin">
-             <number>2</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QSlider" name="horizontalSlider">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>36</horstretch>
-              <verstretch>2</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
            <widget class="QSlider" name="verticalSlider">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>2</horstretch>
+              <horstretch>3</horstretch>
               <verstretch>36</verstretch>
              </sizepolicy>
             </property>
@@ -766,39 +734,7 @@ QPushButton:disabled {
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>1</width>
-              <height>1</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>1</width>
-              <height>1</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1" colspan="3">
+          <item row="1" column="2" colspan="3">
            <widget class="QWidget" name="widget" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <property name="spacing">
@@ -820,8 +756,8 @@ QPushButton:disabled {
               <widget class="QSpinBox" name="spinBoxSlicer">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>1</horstretch>
-                 <verstretch>1</verstretch>
+                 <horstretch>3</horstretch>
+                 <verstretch>2</verstretch>
                 </sizepolicy>
                </property>
                <property name="minimumSize">
@@ -869,14 +805,49 @@ QSpinBox QAbstractSpinBox::down-button:hover {
             </layout>
            </widget>
           </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QSlider" name="horizontalSlider">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>36</horstretch>
+              <verstretch>2</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="mainImage">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>38</horstretch>
+              <verstretch>38</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="gridWidget_2" native="true">
+        <widget class="QWidget" name="widgetMap" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>39</horstretch>
+           <horstretch>42</horstretch>
            <verstretch>39</verstretch>
           </sizepolicy>
          </property>
@@ -896,27 +867,30 @@ QSpinBox QAbstractSpinBox::down-button:hover {
           <property name="bottomMargin">
            <number>5</number>
           </property>
-          <property name="horizontalSpacing">
-           <number>8</number>
+          <property name="spacing">
+           <number>6</number>
           </property>
-          <property name="verticalSpacing">
-           <number>5</number>
-          </property>
-          <item row="0" column="0" colspan="4">
-           <widget class="QLabel" name="mapping">
+          <item row="1" column="0" colspan="4">
+           <widget class="QSlider" name="horizontalSliderMap">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>38</horstretch>
-              <verstretch>38</verstretch>
+              <horstretch>95</horstretch>
+              <verstretch>2</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string/>
+            <property name="maximumSize">
+             <size>
+              <width>1000</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QCheckBox" name="checkBox">
+          <item row="1" column="4">
+           <widget class="QCheckBox" name="SyncCheckBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>3</horstretch>
@@ -925,30 +899,44 @@ QSpinBox QAbstractSpinBox::down-button:hover {
             </property>
             <property name="font">
              <font>
-              <pointsize>7</pointsize>
+              <pointsize>8</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
              </font>
             </property>
             <property name="styleSheet">
              <string notr="true">color:white</string>
             </property>
             <property name="text">
-             <string>synced</string>
+             <string>Synced</string>
             </property>
             <property name="tristate">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QSlider" name="horizontalSlider_2">
+          <item row="0" column="0" colspan="5">
+           <widget class="QLabel" name="mapping">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>95</horstretch>
-              <verstretch>2</verstretch>
+              <horstretch>52</horstretch>
+              <verstretch>38</verstretch>
              </sizepolicy>
             </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="margin">
+             <number>-2</number>
             </property>
            </widget>
           </item>
@@ -959,7 +947,7 @@ QSpinBox QAbstractSpinBox::down-button:hover {
         <widget class="QWidget" name="verticalWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>16</horstretch>
+           <horstretch>14</horstretch>
            <verstretch>39</verstretch>
           </sizepolicy>
          </property>
@@ -1022,7 +1010,7 @@ QSpinBox QAbstractSpinBox::down-button:hover {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="errorMap">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>16</horstretch>
@@ -1068,7 +1056,7 @@ QSpinBox QAbstractSpinBox::down-button:hover {
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>16</horstretch>
-              <verstretch>38</verstretch>
+              <verstretch>12</verstretch>
              </sizepolicy>
             </property>
             <property name="frameShape">
@@ -1076,6 +1064,160 @@ QSpinBox QAbstractSpinBox::down-button:hover {
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <property name="leftMargin">
+              <number>18</number>
+             </property>
+             <property name="rightMargin">
+              <number>18</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>0</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="styleSheet">
+                <string notr="true">color: white</string>
+               </property>
+               <property name="text">
+                <string>Max</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QSpinBox" name="maxMap">
+               <property name="styleSheet">
+                <string notr="true">QSpinBox {
+    border: 1px solid #444;
+    border-radius: 2px;
+    padding: 0 0 1 0;
+    background-color: #222;
+    color: #ccc;
+    font-size: 12px;
+}
+
+</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="label_6">
+               <property name="styleSheet">
+                <string notr="true">color: white</string>
+               </property>
+               <property name="text">
+                <string>Min</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="label_4">
+               <property name="styleSheet">
+                <string notr="true">color:white;
+padding: 0 0 10 0;</string>
+               </property>
+               <property name="text">
+                <string>Adjust Map Boundaries</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="minMap">
+               <property name="styleSheet">
+                <string notr="true">QSpinBox {
+    border: 1px solid #444;
+    border-radius: 2px;
+    padding: 0 0 1 0;
+    background-color: #222;
+    color: #ccc;
+    font-size: 12px;
+}</string>
+               </property>
+               <property name="minimum">
+                <number>-200</number>
+               </property>
+               <property name="maximum">
+                <number>0</number>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>25</width>
+              <height>450</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="intensityMap">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:  white</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="showxcoorMap">
+            <property name="styleSheet">
+             <string notr="true">color:  white</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="showycoorMap">
+            <property name="styleSheet">
+             <string notr="true">color:  white</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -1362,9 +1504,21 @@ QSpinBox QAbstractSpinBox::down-button:hover {
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExportMap">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Export Map</string>
+     </property>
+     <addaction name="savePNGFormat"/>
+     <addaction name="saveNIfTIFormat"/>
+    </widget>
     <addaction name="openMRI"/>
-    <addaction name="actionImport"/>
-    <addaction name="actionExport"/>
+    <addaction name="menuExportMap"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Project"/>
+    <addaction name="actionExport_Project"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -1390,11 +1544,6 @@ QSpinBox QAbstractSpinBox::down-button:hover {
     <string>Import</string>
    </property>
   </action>
-  <action name="actionExport">
-   <property name="text">
-    <string>Export</string>
-   </property>
-  </action>
   <action name="actionAnalyze">
    <property name="text">
     <string>Analyze</string>
@@ -1413,6 +1562,32 @@ QSpinBox QAbstractSpinBox::down-button:hover {
   <action name="openMRI">
    <property name="text">
     <string>Open MRI</string>
+   </property>
+  </action>
+  <action name="actionImport_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Import Project</string>
+   </property>
+  </action>
+  <action name="actionExport_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Export Project</string>
+   </property>
+  </action>
+  <action name="savePNGFormat">
+   <property name="text">
+    <string>PNG Format</string>
+   </property>
+  </action>
+  <action name="saveNIfTIFormat">
+   <property name="text">
+    <string>NIfTI Format</string>
    </property>
   </action>
  </widget>
