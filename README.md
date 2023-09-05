@@ -1,7 +1,6 @@
 # EasyqMR
 alpha 0.1 release
 #
-
 # Open source computational tool for formulating parametric maps in quantitative techniques in magnetic resonance
 
 #Tools available
