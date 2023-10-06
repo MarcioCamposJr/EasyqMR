@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "easyqmr"
 version = "0.0.0"
 authors = [
-  { name="Example Author", email="author@example.com" },
+  { name="Marcio Campos", email="marcio.campos6@gmail.com" },
 ]
 description = "A small example package"
 readme = "README.md"
