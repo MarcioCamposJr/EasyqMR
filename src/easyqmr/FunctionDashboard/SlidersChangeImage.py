@@ -1,5 +1,5 @@
 from qtpy.QtGui import QImage,QPixmap
-from software_1.Preprocessing.FormattingMatrix import FormatMatrix
+from easyqmr.Preprocessing.FormattingMatrix import FormatMatrix
 
 class SliderMRI():
 

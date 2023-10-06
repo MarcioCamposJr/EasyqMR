@@ -1,6 +1,6 @@
 from qtpy.QtGui import QImage, QPixmap, QPainter, QPen, QColor
 from qtpy.QtCore import Qt
-from software_1.Preprocessing.FormattingMatrix import FormatMatrix
+from easyqmr.Preprocessing.FormattingMatrix import FormatMatrix
 
 class SliderMRI_ROI():
 

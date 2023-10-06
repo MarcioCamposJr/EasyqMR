@@ -5,14 +5,14 @@ from qtpy.QtCore import Qt
 from pathlib import Path
 from copy import deepcopy, copy
 
-from software_1.ImpExpMRI.ProcessingFile.FormattingMRI import FormattedMRI
-from software_1.ImpExpMRI.ProcessingFile.ClassificationType import classification
-from software_1.ImpExpMRI.ProcessingFile import OrderSlices
-from software_1.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
+from easyqmr.ImpExpMRI.ProcessingFile.FormattingMRI import FormattedMRI
+from easyqmr.ImpExpMRI.ProcessingFile.ClassificationType import classification
+from easyqmr.ImpExpMRI.ProcessingFile import OrderSlices
+from easyqmr.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
 
-from software_1.Alerts.Error.ErrorWarning import ErrorWarning
+from easyqmr.Alerts.Error.ErrorWarning import ErrorWarning
 
-from software_1.Alerts.Processing.UIProgressStepOpen import ProgressUI
+from easyqmr.Alerts.Processing.UIProgressStepOpen import ProgressUI
 
 import nibabel as nib
 import pydicom as dicom
@@ -78,7 +78,7 @@ class OpenMRI(QDialog):
         self.tableFile.setCellWidget(0, 0, self.checkbox_horizontal)
 
         # Test de stylesheet
-        # pathStyleSheet = "C:/Users/marci/OneDrive/Desktop/EasyqMRI/software_1/QSS/StyleSheetTableOpenMRI.qss"
+        # pathStyleSheet = "C:/Users/marci/OneDrive/Desktop/EasyqMRI/easyqmr/QSS/StyleSheetTableOpenMRI.qss"
         # with open(pathStyleSheet, "r") as file:
         #     qss_style = file.read()
         # self.tableFile.setStyleSheet(qss_style)

@@ -1,5 +1,5 @@
 #TODO preciso fazer a verificacao por parametro para que nao haja fatia repetida(fazendo isso pq comparar a matrix inteira parece ser algo mais custoso, ou sera q nao?)
-from software_1.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
+from easyqmr.ImpExpMRI.ProcessingFile.FilterSlices import SlicesMRI
 
 import numpy as np
 

@@ -3,8 +3,8 @@ from qtpy.uic import loadUi
 from qtpy.QtGui import QMovie
 from qtpy.QtCore import Qt
 
-from software_1.ImpExpMRI.Preview.MRIPreviewSample import create_gif
-from software_1.Alerts.Processing.Processing1 import Processing1
+from easyqmr.ImpExpMRI.Preview.MRIPreviewSample import create_gif
+from easyqmr.Alerts.Processing.Processing1 import Processing1
 
 import os
 

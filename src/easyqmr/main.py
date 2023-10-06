@@ -1,20 +1,20 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-from ImpExpMRI.Preview import Preview
-from ImpExpMRI import OpenMRI
-from ImpExpMRI.ExportMap import ExportMapForamt
+from .ImpExpMRI.Preview import Preview
+from .ImpExpMRI import OpenMRI
+from .ImpExpMRI.ExportMap import ExportMapForamt
 
-from Alerts.Error.ErrorWarning import ErrorWarning
-from Alerts.About import WindowAbout
+from .Alerts.Error.ErrorWarning import ErrorWarning
+from .Alerts.About import WindowAbout
 
-from Preprocessing.BrainExtraction import BET
-from Preprocessing.MRIcoregistration import register_slices
+from .Preprocessing.BrainExtraction import BET
+from .Preprocessing.MRIcoregistration import register_slices
 
-from FunctionDashboard.SlidersChangeImage import SliderMRI
-from FunctionDashboard.ParameterGraphAnalysis import graphParameter
-from FunctionDashboard.MaskSelection import Mask
-from FunctionDashboard.ROI import SliderMRI_ROI
+from .FunctionDashboard.SlidersChangeImage import SliderMRI
+from .FunctionDashboard.ParameterGraphAnalysis import graphParameter
+from .FunctionDashboard.MaskSelection import Mask
+from .FunctionDashboard.ROI import SliderMRI_ROI
 
 from qtpy.QtWidgets import QMainWindow, QApplication, QStackedWidget, QSizePolicy,QVBoxLayout, QWidget, QFileDialog
 from qtpy.uic import loadUi
@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.modalityMRI = None
 
         path = os.path.dirname(os.path.abspath('None'))
-        path = os.path.join(path, "qt.ui/main.ui")
+        path = os.path.join(path, "src/easyqmr/qt.ui/main.ui")
         loadUi(path, self)
 
         self.openMRI.triggered.connect(self.OpenMRI)
@@ -684,7 +684,7 @@ class MainWindow(QMainWindow):
         # Encerra o programa
         app.quit()
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
 
     screen = app.primaryScreen()
@@ -700,8 +700,8 @@ if __name__ == "__main__":
     policy.setHeightForWidth(True)
     widget.setSizePolicy(policy)
 
-    widget.setMinimumWidth(sizeScreen.width()*(2/3))
-    widget.setMinimumHeight(sizeScreen.height()*(2/3))
+    widget.setMinimumWidth(int(sizeScreen.width()*(2/3)))
+    widget.setMinimumHeight(int(sizeScreen.height()*(2/3)))
 
     widget.showMaximized()
 

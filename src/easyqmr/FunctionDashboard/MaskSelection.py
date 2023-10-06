@@ -2,7 +2,7 @@ from qtpy.QtWidgets import QDialog
 from qtpy.QtGui import QPixmap,QImage
 from qtpy.uic import loadUi
 from PIL import Image
-from software_1.Preprocessing.FormattingMatrix import FormatMatrix
+from easyqmr.Preprocessing.FormattingMatrix import FormatMatrix
 import os
 
 class Mask(QDialog):

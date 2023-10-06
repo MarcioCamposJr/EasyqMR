@@ -1,5 +1,5 @@
 from PIL import Image
-from software_1.Preprocessing.FormattingMatrix import FormatTo8bits
+from easyqmr.Preprocessing.FormattingMatrix import FormatTo8bits
 import os
 
 def create_gif(img_dicom, fp):      #CREATE DICOM IMAGE ANIMATION

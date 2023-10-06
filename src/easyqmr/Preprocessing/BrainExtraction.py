@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from dipy.segment.mask import median_otsu
 
-from software_1.Alerts.Processing.UIProgressStepOpen import ProgressUI
+from easyqmr.Alerts.Processing.UIProgressStepOpen import ProgressUI
 
 class BET():
 

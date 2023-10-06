@@ -1,4 +1,4 @@
-from software_1.Preprocessing.FormattingMatrix import FormatTo16bits
+from easyqmr.Preprocessing.FormattingMatrix import FormatTo16bits
 import numpy as np
 
 def FormattedMRI(MRI, image_type):
